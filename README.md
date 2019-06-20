@@ -1,14 +1,12 @@
-# csc667-teamproject-teamNN
+# csc667-su19-TeamNN
 
-# Todo:
+## Please when ready add your teams application URL or IP to the repository description. This will help with grading. Teams are expected to keep this value up to date.
 
-1. Change the name of the repo with the correct team number.
+## Please do the following steps before completing Milestone 0.
+1. Change the name of the repository from csc667-su19-TeamNN. All that needs to change is the NN to your respective team number. Team numbers whose value is less than 10, please pad with a 0. Ex team 1 is Team01 team 11 is Team11. Please make sure to also remove the username from the repository as well. 
 
-2. Invite all members to your repository.
+1. PLEASE REMOVE THE USERNAME FROM THE REPOSITORY NAME!!!
 
-3. When ready, initialize your repository with the initial state of your project.
+2. Add ALL members of your team to this repository. For it to count, they must ACCEPT the invite.
 
-
-
-### Note that the milestone folders have been moved to their branch named milestones. 
-### This is to keep them off the master/production branch so they are cleaner.
+## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
