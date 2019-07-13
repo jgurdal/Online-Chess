@@ -31,6 +31,33 @@ body {
   opacity: 0.8;
 }
 
+#chatbox {
+    text-align:left;
+    margin-top: 20px;
+    margin-left: 20px;
+    
+    background:#fff;
+    height:500px;
+    width:300px;
+  
+    overflow:auto;
+}
+
+#wrapper{
+    margin-top: 20px;
+    margin-left: 20px;
+    padding-bottom:25px;
+    width:504px;
+}
+#usermsg{
+  margin-top: 0;
+  margin-left: 20px;
+  width: 300px; 
+}
+#submitmsg{
+  margin-left: -60px;
+}
+
 #centered{
     position: absolute;
     left: 200px;
@@ -195,7 +222,15 @@ span.psw {
     }
 </script>
 </div>  
-<div id="centered"></div>
+<div id="centered">
+  <div id="wrapper">
+      <div id="chatbox"></div>
+      <form name="message" action="">
+        <input name="usermsg" type="text" placeholder="Add a comment!" id="usermsg">
+        <input name="submitmsg" type="submit"  id="submitmsg" value="Send" />
+      </form> 
+  </div>
+</div>
 
 </body>
 </html>
