@@ -2,11 +2,36 @@
 
 ## Please when ready add your teams application URL or IP to the repository description. This will help with grading. Teams are expected to keep this value up to date.
 
-## Please do the following steps before completing Milestone 1.
-1. Change the name of the repository from csc667-su19-TeamNN. All that needs to change is the NN to your respective team number. Team numbers whose value is less than 10, please pad with a 0. Ex team 1 is Team01 team 11 is Team11. Please make sure to also remove the username from the repository as well. 
+## http://13.57.235.101/
 
-1. PLEASE REMOVE THE USERNAME FROM THE REPOSITORY NAME!!!
+## GitHub Instructions
 
-2. Add ALL members of your team to this repository. For it to count, they must ACCEPT the invite.
+1. Clone the repository with the following command:
 
-## NO code needs to be stored in the root of your repository. You may rename the application folder if you like to your team's application name. But all source code related to your team's application should be stored inside the application folder.
+```
+git clone https://github.com/csc667/csc667-su19-Team02.git
+``` 
+
+2. Checkout the feature branch you wish to work on:
+
+```
+git checkout feature-registration
+``` 
+
+3. Download any new data on the branch from the remote repository with:
+
+```
+git fetch origin feature-registration
+```
+
+4. Once your work is finished:
+
+```
+git commit -m "Please leave a detailed commit message here"
+```
+
+5. Finally, to push your work to the remote repository:
+
+```
+git push origin feature-registration
+```
