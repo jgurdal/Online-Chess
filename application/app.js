@@ -30,14 +30,16 @@ app.post('/login', function (req, res) {
 			if(result[0].password == req.body.password) {
 				//Login success: email exists, password matches
 				console.log('Login successful');
-				res.render('index');
+				res.send('Login successful');
 			} else {
 				//Login failure: username exists, password does not match
 				console.log('Incorrect password!');
+				res.send('Incorrect password!');
 			}
 		} else {
 			//Login failure: username does not exist, therefore no password
 			console.log('Username does not exist!');
+			res.send('Username does not exist!');
 		}
 	});
 
