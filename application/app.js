@@ -69,6 +69,6 @@ app.post('/register', function (req, res) {
 	res.send('Account successfully created!\n')
 });
 
-var port = 3000;
+var port = 80;
 app.listen(port);
 console.log('Listening on port...', port);
