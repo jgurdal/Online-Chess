@@ -22,9 +22,9 @@ const config = {
 	//can be altered
 	connectionLimit: 10,
 	host: "chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com",
-    user: "root",
-    password: "Team7isthebestteam",
-    database: "csc667teamchess"
+    	user: "root",
+   	password: "Team7isthebestteam",
+    	database: "csc667teamchess"
 };
 
 const pool = msql.createPool(config);
