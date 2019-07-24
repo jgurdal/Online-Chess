@@ -1,76 +1,87 @@
+//required libraries
 var express = require('express');
 var bodyParser = require('body-parser')
-var app = express();
+var dbPool = require(__dirname + "/database/dbPool.js");
+var bcrypt = require('bcrypt')
 
+var app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 
-/**
- * IMPORT MODULES - MySQL query
- */
-const createConnection = require(__dirname + "/mysql/createConnection.js");
+//constructs new database pool
+var dbpool = new dbPool();
+
+//Begin routes
 
 app.get('/', function (req, res) { 
+
 	res.render('index');
+
 });
 
 app.get('/about', function (req, res) { 
+
 	res.render('about');
+
 });
 
 app.post('/login', function (req, res) {
-	let username = req.body.username;
 
-	let db = createConnection();
+	let username = req.body.username;
 	let sql = "SELECT * FROM user WHERE username = ?";
-	db.query(sql, username, function (err, result, field) {
-		if(err) {
-			throw err;
-		} else if(result.length > 0) {
-			if(result[0].password == req.body.password) {
-				//Login success: email exists, password matches
-				console.log('Login successful');
-				res.send('Login successful');
-			} else {
-				//Login failure: username exists, password does not match
-				console.log('Incorrect password!');
-				res.send('Incorrect password!');
-			}
+
+	dbpool.queryDB(sql, username, function(results) {
+
+		if(results.length > 0) {
+
+			bcrypt.compare(req.body.password, results[0].password, function(err2, res2) {
+
+			//current implementation will return false because part of the hash field is being chopped off
+			//the hash length is 60 chracters long
+			//console.log("The returned passcode is : %s", results[0].password);
+    			res.send((res2)?'Login successful':'Incorrect password!');
+
+			});
+
 		} else {
 			//Login failure: username does not exist, therefore no password
-			console.log('Username does not exist!');
 			res.send('Username does not exist!');
-		}
+		}	
+
 	});
 
-	db.end();
 });
 
 app.get('/register', function (req, res) {
+
 	res.render('register');
+
 });
 
 app.post('/register', function (req, res) {
-	const user = {
-		"name": req.body.name,
-		"username": req.body.username,
-		"email": req.body.email,
-		"password": req.body.password
-	}
 
-	let db = createConnection();
-	let sql = "INSERT INTO user SET ?";
-	db.query(sql, user, function (err, result, field) {
-		if(err) {
-			throw err;
-		} 
-		console.log(result);
+	bcrypt.hash(req.body.password, 10, function(err, hash) {
+
+			const user = {
+				"name": req.body.name,
+				"username": req.body.username,
+				"email": req.body.email,
+				"password": hash
+			}
+
+			//console.log("The generated passcode is : %s", hash);
+
+			let sql = "INSERT INTO user SET ?";
+
+			dbpool.queryDB(sql, user, function (results) {
+				res.send('Account successfully created!\n');	
+			});
+
 	});
 
-	db.end();
-	res.send('Account successfully created!\n')
 });
 
-var port = 80;
+//var port = 80;
+var port = 3000;
 app.listen(port);
 console.log('Listening on port...', port);
