@@ -1,18 +1,18 @@
-//required libraries
+//resolving libraries
 var express = require('express');
 var bodyParser = require('body-parser')
-var dbPool = require(__dirname + "/database/dbPool.js");
+var {testDB, queryDB, closeDB} = require(__dirname + "/database/dbPool.js");
 var bcrypt = require('bcrypt')
 
 var app = express();
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({ extended: true })); // body-parser
+// body-parser
+app.use(bodyParser.urlencoded({ extended: true })); 
 
-//constructs new database pool
-var dbpool = new dbPool();
+//tests connection to database pool
+testDB();
 
 //Begin routes
-
 app.get('/', function (req, res) { 
 
 	res.render('index');
@@ -30,15 +30,15 @@ app.post('/login', function (req, res) {
 	let username = req.body.username;
 	let sql = "SELECT * FROM user WHERE username = ?";
 
-	dbpool.queryDB(sql, username, function(results) {
+	queryDB(sql, username, function(results) {
 
 		if(results.length > 0) {
 
 			bcrypt.compare(req.body.password, results[0].password, function(err2, res2) {
 
-			//current implementation will return false because part of the hash field is being chopped off
+			//current implementation will return false because 28 chars of the hash field is being chopped off
 			//the hash length is 60 chracters long
-			//console.log("The returned passcode is : %s", results[0].password);
+			// console.log("The returned passcode is : %s", results[0].password);
     			res.send((res2)?'Login successful':'Incorrect password!');
 
 			});
@@ -69,11 +69,11 @@ app.post('/register', function (req, res) {
 				"password": hash
 			}
 
-			//console.log("The generated passcode is : %s", hash);
+			// console.log("The generated passcode is : %s", hash);
 
 			let sql = "INSERT INTO user SET ?";
 
-			dbpool.queryDB(sql, user, function (results) {
+			queryDB(sql, user, function (results) {
 				res.send('Account successfully created!\n');	
 			});
 
