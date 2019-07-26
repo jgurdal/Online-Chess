@@ -18,6 +18,11 @@ app.get('/about', function (req, res) {
 	res.render('about');
 });
 
+// Temp route to chess.ejs
+app.get('/chess', function (req, res) { 
+	res.render('chess');
+});
+
 app.post('/login', function (req, res) {
 	let username = req.body.username;
 
@@ -71,6 +76,7 @@ app.post('/register', function (req, res) {
 	res.send('Account successfully created!\n')
 });
 
-var port = 80;
+var port = 3000;
+//var port = 80;
 app.listen(port);
 console.log('Listening on port...', port);

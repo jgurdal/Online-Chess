@@ -1,0 +1,35 @@
+<!-- Basic chessboard from chessboard.js -->
+
+<!DOCTYPE html>
+ <html>
+   <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous">    
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $(".welcome").append("!!!");
+        var board2 = Chessboard('board2', {
+            draggable: true,
+            dropOffBoard: 'trash',
+            sparePieces: true
+    })
+
+    $('#startBtn').on('click', board2.start)
+    $('#clearBtn').on('click', board2.clear)
+    });
+    </script>
+    <link rel="stylesheet"
+          href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+          integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+          crossorigin="anonymous">
+  </head> 
+   <body>
+      <div id="board2" style="width: 400px"></div>
+      <button id="startBtn">Start Position</button>
+      <button id="clearBtn">Clear Board</button>
+  </body>
+</html>
