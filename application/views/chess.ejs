@@ -1,34 +1,35 @@
-<!-- Basic chessboard from chessboard.js -->
-
 <!DOCTYPE html>
- <html>
-   <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.1/jquery.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
-        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
-        crossorigin="anonymous">    
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function() {
-        var board2 = Chessboard('board2', {
-            draggable: true,
-            dropOffBoard: 'trash',
-            sparePieces: true
-    })
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Chess</title>
 
-    $('#startBtn').on('click', board2.start)
-    $('#clearBtn').on('click', board2.clear)
-    });
-    </script>
-    <link rel="stylesheet"
-          href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
-          integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
-          crossorigin="anonymous">
-  </head> 
-   <body>
-      <div id="board2" style="width: 400px"></div>
+
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+      integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+      crossorigin="anonymous">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" integrity="sha384-s3XgLpvmHyscVpijnseAmye819Ee3yaGa8NxstkJVyA6nuDFjt59u1QvuEl/mecz" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+        integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+        crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+  	<div id="board2" style="width: 400px"></div>
       <button id="startBtn">Start Position</button>
       <button id="clearBtn">Clear Board</button>
+    <script type="text/javascript">
+    	const board = document.getElementById('board2');
+      var boardchess = Chessboard('board2', {
+            draggable: true,
+            dropOffBoard: 'trash',
+            sparePieces: true,
+            pieceTheme: 'https://github.com/oakmac/chessboardjs/blob/master/website/img/chesspieces/wikipedia/{piece}.png'
+    	})
+    	$('#startBtn').on('click', boardchess.start)
+    	$('#clearBtn').on('click', boardchess.clear)
+    </script>  
   </body>
 </html>
