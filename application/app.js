@@ -25,7 +25,7 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) { 
-	res.render('chess/chess.html');
+	res.render('chess/chess.ejs');
 });
 
 app.post('/login', function (req, res) {
