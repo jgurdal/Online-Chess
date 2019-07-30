@@ -10,6 +10,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 app.use(cors());
 
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
 /**
  * IMPORT MODULES - MySQL query
  */
@@ -81,7 +84,39 @@ app.post('/register', function (req, res) {
 	res.send('Account successfully created!\n')
 });
 
-var port = 3000;
-//var port = 80;
-app.listen(port);
-console.log('Listening on port...', port);
+io.on('connection',function(socket){  
+    console.log("A user is connected");
+    socket.on('status added',function(status){
+      add_status(status,function(res){
+        if(res){
+            io.emit('refresh feed',status);
+        } else {
+            io.emit('error');
+        }
+      });
+    });
+});
+
+
+var add_status = function (status,callback) {
+
+
+    let db = createConnection();
+
+    db.query("INSERT INTO `fbstatus` (`s_text`) VALUES ('"+status+"')",function(err,rows){
+            db.end();
+            if(!err) {
+              callback(true);
+            }
+        });
+
+}
+
+// var port = 3000;
+// //var port = 80;
+// app.listen(port);
+// console.log('app Listening on port...', port);
+
+http.listen(3000, function(){
+	  console.log('http listening on port...', 3000);
+});

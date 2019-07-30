@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
     <script src="chess.js"></script>
 
     <link
@@ -35,10 +36,20 @@
           <div class="col-sm">
           </div>
           <div class="col-sm">
-              <div style="height:150px;width:300px;border:2px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
-                Chat box
-              
-                </div>
+              <div id="comment_box" style = "padding:5%;">
+      <textarea id="comment" rows="5" cols="70"></textarea><br /><br />
+      <input type="button" id="add_status" value="Add Status">
+    </div>
+      <div
+       id    = "show_comments"
+       class = "jumbotron"
+       style = "width: 38%;
+                height: 100%;
+                padding: 2%;
+                margin-left:5%;
+                margin-top:-53px;"
+     >
+      </div>
           </div>
         </div>
         <br>
@@ -146,6 +157,15 @@
       board = Chessboard("myBoard", config);
 
       updateStatus();
+
+      var socket = io();
+      $("#add_status").click(function(){
+            socket.emit('status added',$("#comment").val());
+          });
+          socket.on('refresh feed',function(msg){
+            $("#show_comments").append(msg + '<br /><br />');
+          });
+
     </script>
   </body>
 </html>
