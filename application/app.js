@@ -1,8 +1,11 @@
 var express = require('express');
-var bodyParser = require('body-parser')
-var cors = require('cors')
+var bodyParser = require('body-parser');
+var cors = require('cors');
 var app = express();
 
+app.use(express.static(__dirname + '/views'));
+app.set('views', __dirname + '/views');
+app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 app.use(cors());
@@ -22,7 +25,7 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) { 
-	res.render('chess');
+	res.render('chess/chess.html');
 });
 
 app.post('/login', function (req, res) {
