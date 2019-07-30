@@ -1,13 +1,22 @@
 //resolving libraries
 var express = require('express');
+
 var bodyParser = require('body-parser')
 var {testDB, queryDB, closeDB} = require(__dirname + "/database/dbPool.js");
 var bcrypt = require('bcrypt')
 
+var cors = require('cors');
 var app = express();
+
+app.use(express.static(__dirname + '/views'));
+app.set('views', __dirname + '/views');
+app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
-// body-parser
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true })); // body-parser
+app.use(cors());
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 //tests connection to database pool
 testDB();
@@ -23,6 +32,11 @@ app.get('/about', function (req, res) {
 
 	res.render('about');
 
+});
+
+// Temp route to chess.ejs
+app.get('/chess', function (req, res) { 
+	res.render('chess/chess.ejs');
 });
 
 app.post('/login', function (req, res) {
@@ -81,7 +95,39 @@ app.post('/register', function (req, res) {
 
 });
 
-//var port = 80;
-var port = 3000;
-app.listen(port);
-console.log('Listening on port...', port);
+
+io.on('connection',function(socket){  
+    console.log("A user is connected");
+    socket.on('status added',function(status){
+      add_status(status,function(res){
+        if(res){
+            io.emit('refresh feed',status);
+        } else {
+            io.emit('error');
+        }
+      });
+    });
+});
+
+
+var add_status = function (status,callback) {
+
+
+    let db = createConnection();
+
+    db.query("INSERT INTO `fbstatus` (`s_text`) VALUES ('"+status+"')",function(err,rows){
+            db.end();
+            if(!err) {
+              callback(true);
+            }
+        });
+}
+
+// var port = 3000;
+// //var port = 80;
+// app.listen(port);
+// console.log('app Listening on port...', port);
+
+http.listen(3000, function(){
+	  console.log('http listening on port...', 3000);
+});

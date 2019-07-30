@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chess</title>
+
+    <link rel="stylesheet" href="chessboard-1.0.0.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+    <script src="chess.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm overflow-auto">
+          <h5>Status:</h5>
+          <div id="status"></div>
+          <h5>Player Turn:</h5>
+          <div id="playturn"></div>
+          <h5>Move List:</h5>
+          <div id="pgn"></div>
+        </div>
+        <div class="col-sm">
+          <div id="myBoard" style="width: 400px"></div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+              <div id="comment_box" style = "padding:5%;">
+      <textarea id="comment" rows="5" cols="70"></textarea><br /><br />
+      <input type="button" id="add_status" value="Send Message">
+    </div>
+      <div
+       id    = "show_comments"
+       class = "jumbotron"
+       style = "width: 38%;
+                height: 100%;
+                padding: 2%;
+                margin-left:5%;
+                margin-top:-53px;"
+     >
+      </div>
+          </div>
+        </div>
+        <br>
+      <div class="row">
+        <div class="col-sm">
+          <button type="button" class="btn btn-danger">Leave Game</button>
+        </div>
+        <div class="col-sm">
+            <div class="input-group">
+                     <button id="makemove" type="button">Make your move</button>
+                </span>
+             </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // NOTE: this example uses the chess.js library:
+      // https://github.com/jhlywa/chess.js
+
+      var board = null;
+      var game = new Chess();
+      var $status = $("#status");
+      var $playturn = $("#playturn");
+      var $fen = $("#fen");
+      var $pgn = $("#pgn");
+
+      function onDragStart(source, piece, position, orientation) {
+        // do not pick up pieces if the game is over
+        if (game.game_over()) return false;
+
+        // only pick up pieces for the side to move
+        if (
+          (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+          (game.turn() === "b" && piece.search(/^w/) !== -1)
+        ) {
+          return false;
+        }
+      }
+
+      function onDrop(source, target) {
+        // see if the move is legal
+        var move = game.move({
+          from: source,
+          to: target,
+          promotion: "q" // NOTE: always promote to a queen for example simplicity
+        });
+
+        // illegal move
+        if (move === null) return "snapback";
+
+        updateStatus();
+        
+      }
+
+
+      // update the board position after the piece snap
+      // for castling, en passant, pawn promotion
+      function onSnapEnd() {
+        board.position(game.fen());
+        socket.emit('move_made', game.fen());            
+      }
+
+      function updateStatus() {
+        var status = "";
+
+        var moveColor = "White";
+        if (game.turn() === "b") {
+          moveColor = "Black";
+        }
+
+        // checkmate?
+        if (game.in_checkmate()) {
+          status = "Game over, " + moveColor + " is in checkmate.";
+        }
+
+        // draw?
+        else if (game.in_draw()) {
+          status = "Game over, drawn position";
+        }
+
+        // game still on
+        else {
+          status = "Playing";
+          playturn = moveColor;
+          // status = moveColor + " to move";
+
+          // check?
+          if (game.in_check()) {
+            status = moveColor + " is in check";
+          }
+        }
+
+        $status.html(status);
+        $playturn.html(playturn);
+        $fen.html(game.fen());
+        $pgn.html(game.pgn());
+      }
+
+      var config = {
+        draggable: true,
+        position: "start",
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd
+      };
+      board = Chessboard("myBoard", config);
+
+      updateStatus();
+
+      var socket = io();
+      $("#add_status").click(function(){
+            socket.emit('status added',$("#comment").val());
+          });
+          socket.on('refresh feed',function(msg){
+            $("#show_comments").append(msg + '<br /><br />');
+          });
+
+    </script>
+  </body>
+</html>
