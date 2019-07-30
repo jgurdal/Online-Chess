@@ -38,7 +38,7 @@
           <div class="col-sm">
               <div id="comment_box" style = "padding:5%;">
       <textarea id="comment" rows="5" cols="70"></textarea><br /><br />
-      <input type="button" id="add_status" value="Add Status">
+      <input type="button" id="add_status" value="Send Message">
     </div>
       <div
        id    = "show_comments"
@@ -59,9 +59,7 @@
         </div>
         <div class="col-sm">
             <div class="input-group">
-                <input type="text" class="form-control">
-                <span class="input-group-btn">
-                     <button class="btn btn-dark" type="button">Go!</button>
+                     <button id="makemove" type="button">Make your move</button>
                 </span>
              </div>
         </div>
@@ -103,12 +101,15 @@
         if (move === null) return "snapback";
 
         updateStatus();
+        
       }
+
 
       // update the board position after the piece snap
       // for castling, en passant, pawn promotion
       function onSnapEnd() {
         board.position(game.fen());
+        socket.emit('move_made', game.fen());            
       }
 
       function updateStatus() {

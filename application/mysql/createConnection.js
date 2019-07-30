@@ -15,11 +15,10 @@ function createConnection() {
   // Create a database Connection
   let connection = mysql.createConnection({
     // AWS RDS
-    host: 'localhost',
+    host: 'chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com',
     user: 'root',
-    port: 3306,
-    password: 'root',
-    database : 'CSC667'
+    password: 'Team7isthebestteam',
+    database: 'csc667teamchess'
     // host: "localhost",
     // user: "root",
     // password: "",
