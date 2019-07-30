@@ -8,6 +8,13 @@ var bcrypt = require('bcrypt')
 var cors = require('cors');
 var app = express();
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+var session = require("express-session");
+var passport = require("passport");
+var LocalStrategy = require("passport-local").Strategy;
+var MySQLStore = require("express-mysql-session")(session);
+
 app.use(express.static(__dirname + '/views'));
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
@@ -22,6 +29,77 @@ var io = require('socket.io')(http);
 testDB();
 
 //Begin routes
+let options = {
+    // AWS RDS
+    host: 'chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com',
+    user: 'root',
+    password: 'Team7isthebestteam',
+    database: 'csc667teamchess'
+};
+
+var sessionStore = new MySQLStore(options);
+
+app.use(session({
+  secret: 'My super secretive secret',
+  resave: false,
+  store: sessionStore,
+  saveUninitialized: false,
+  //cookie: { secure: true }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+/**
+ * IMPORT MODULES - MySQL query
+ */
+const createConnection = require(__dirname + "/mysql/createConnection.js");
+
+// Used to dynamically render login--signup--logout 
+// inside header.ejs. That way the login and signup 
+// options will be visible, and logout will not be 
+// visible when user is not signed in. Vice versa 
+app.use(function(req, res, next) {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  next();
+});
+
+passport.use(new LocalStrategy({
+    usernameField: 'username',
+    passwordField: 'password'
+  },
+  function(username, password, done) {
+    // console.log(username);
+    // console.log(password);
+    let db = createConnection();
+    let sql = "SELECT * FROM user WHERE username = ?";
+    db.query(sql, [username], function(err, result, field) {
+      if (err) {
+        throw err;
+      } else if (result.length > 0) {
+        bcrypt.compare(password, result[0].password, function(err, response) {
+          // Login success: email exists, password matches
+          if (response == true) {
+            return done(null, {user_id: result[0].id});
+          } 
+          // Login failure: email exists, password does not match 
+          else 
+          {
+            console.log("Incorrect password!");
+            return done(null, false);
+          }
+        });
+      } 
+      // Login failure: email does not exist, therefor no password
+      else {
+        console.log("Username does not exist!");
+        return done(null, false);
+      }
+    });
+  }
+));
+
+
 app.get('/', function (req, res) { 
 
 	res.render('index');
@@ -39,32 +117,26 @@ app.get('/chess', function (req, res) {
 	res.render('chess/chess.ejs');
 });
 
-app.post('/login', function (req, res) {
 
-	let username = req.body.username;
-	let sql = "SELECT * FROM user WHERE username = ?";
-
-	queryDB(sql, username, function(results) {
-
-		if(results.length > 0) {
-
-			bcrypt.compare(req.body.password, results[0].password, function(err2, res2) {
-
-			//current implementation will return false because 28 chars of the hash field is being chopped off
-			//the hash length is 60 chracters long
-			// console.log("The returned passcode is : %s", results[0].password);
-    			res.send((res2)?'Login successful':'Incorrect password!');
-
-			});
-
-		} else {
-			//Login failure: username does not exist, therefore no password
-			res.send('Username does not exist!');
-		}	
-
-	});
-
+app.get('/login', function (req, res) {
+	res.render('login');
 });
+
+// For login app.get authentication 
+app.post("/login", passport.authenticate(
+  'local',  {
+    successRedirect: "/",
+    failureRedirect: "/login"
+}));
+
+// To end session once user logs out
+app.get("/logout", function(req, res) {
+  req.logout();
+  req.session.destroy();
+  // req.flash("success", "Logout successful");
+  res.redirect("/");
+});
+
 
 app.get('/register', function (req, res) {
 
@@ -72,29 +144,61 @@ app.get('/register', function (req, res) {
 
 });
 
-app.post('/register', function (req, res) {
+app.post("/register", function(req, res) {
 
-	bcrypt.hash(req.body.password, 10, function(err, hash) {
+  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {
+  // Store hash in your password DB.
+    const user = {
+      "name": req.body.name,
+      "username": req.body.username,
+      "email":req.body.email,
+      "password":hash
+    }
 
-			const user = {
-				"name": req.body.name,
-				"username": req.body.username,
-				"email": req.body.email,
-				"password": hash
-			}
+    let db = createConnection();
+    // Store everything into DB
+    let sql = "INSERT INTO user SET ?";
+    db.query(sql, user, function(err, result, field) {
+      if (err) {
+        throw err;
+      } else {
+        let sql = "SELECT LAST_INSERT_ID() AS user_id";
+        db.query(sql, user, function(err, result, field) {
+          if (err) throw err;
 
-			// console.log("The generated passcode is : %s", hash);
+          const user_id = result[0];
 
-			let sql = "INSERT INTO user SET ?";
-
-			queryDB(sql, user, function (results) {
-				res.send('Account successfully created!\n');	
-			});
-
-	});
-
+          req.login(user_id, function(err) {
+            res.send('Account successfully created! Now you can go login!\n')
+            //res.redirect("/");
+          });
+        });
+      }
+    });
+  });
 });
 
+passport.serializeUser(function(user_id, done) {
+  done(null, user_id);
+});
+
+passport.deserializeUser(function(user_id, done) {
+  done(null, user_id);
+});
+
+function authenticationMiddleware () {  
+  return (req, res, next) => {
+    console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
+
+    // let userID = req.session.passport.user.user_id;
+    // console.log(userID);
+
+      if (req.isAuthenticated()) return next();
+      
+      res.redirect('/login')
+      // res.send("You are not authenticated");
+  }
+}
 
 io.on('connection',function(socket){  
     console.log("A user is connected");
