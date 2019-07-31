@@ -228,10 +228,10 @@ var add_status = function (status,callback) {
 }
 
 // var port = 3000;
-// //var port = 80;
-// app.listen(port);
-// console.log('app Listening on port...', port);
+var port = 80;
+app.listen(port);
+console.log('app Listening on port...', port);
 
-http.listen(3000, function(){
-	  console.log('http listening on port...', 3000);
-});
+// http.listen(3000, function(){
+// 	  console.log('http listening on port...', 3000);
+// });
