@@ -100,17 +100,12 @@ passport.use(new LocalStrategy({
   }
 ));
 
-
 app.get('/', function (req, res) { 
-
 	res.render('index');
-
 });
 
 app.get('/about', function (req, res) { 
-
 	res.render('about');
-
 });
 
 // Temp route to chess.ejs
@@ -198,20 +193,20 @@ function authenticationMiddleware () {
       
       res.redirect('/login')
       // res.send("You are not authenticated");
-  }
+  };
 }
 
 io.on('connection',function(socket){  
-    console.log("A user is connected");
-    socket.on('status added',function(status){
-      add_status(status,function(res){
-        if(res){
-            io.emit('refresh feed',status);
-        } else {
-            io.emit('error');
-        }
-      });
+  console.log("A user is connected");
+  socket.on('status added',function(status){
+    add_status(status,function(res){
+      if(res){
+          io.emit('refresh feed',status);
+      } else {
+          io.emit('error');
+      }
     });
+  });
 });
 
 
