@@ -1,9 +1,8 @@
 //resolving libraries
 var express = require('express');
 
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 var {testDB, queryDB, closeDB} = require(__dirname + "/database/dbPool.js");
-var bcrypt = require('bcrypt')
 
 var cors = require('cors');
 var app = express();

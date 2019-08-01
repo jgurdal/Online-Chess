@@ -1409,6 +1409,7 @@ var Chess = function(fen) {
 
       var moves = [];
       var move_string = '';
+      var n = 1;
 
       /* build the list of moves.  a move_string looks like: "3. e3 e6" */
       while (reversed_history.length > 0) {
@@ -1422,7 +1423,14 @@ var Chess = function(fen) {
           if (move_string.length) {
             moves.push(move_string);
           }
-          move_string = move_number + '.';
+          if (n == 1) {
+            move_string = move_number + '.';
+            n++;
+          }
+          else {
+            move_string = '</br>' + move_number + '.';
+          }
+          // move_string = '</br>' + move_number + '.';
         }
 
         move_string = move_string + ' ' + move_to_san(move, false);
