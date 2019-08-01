@@ -23,8 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 app.use(cors());
 
 var http = require('http').Server(app);
-// var io = require('socket.io')(http);
-var io = require('socket.io')('13.57.235.101');
+var io = require('socket.io')(http);
+
 
 //tests connection to database pool
 testDB();
@@ -230,7 +230,9 @@ var add_status = function (status,callback) {
 
 // var port = 3000;
 var port = 80;
-app.listen(port);
+// app.listen(port);
+http.listen(port);
+
 console.log('app Listening on port...', port);
 
 // http.listen(3000, function(){
