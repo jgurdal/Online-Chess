@@ -18,51 +18,54 @@
     <div class="container-fluid">
         <!-- Chat + Movelist + Controls -->
         <div class="row ">
-          <div class="col-4 ml-auto" style="border:solid;background-color:grey">
-            <div class="row ">
-              <h5>Status:</h5>
-              <div id="status"></div>
-            </div>
-            <div class="row">
-              <h5>Player Turn:</h5>
-              <div id="playturn"></div>
-            </div>
-            <div class="row">
-              <h5>Move List:</h5>
-              <div id="pgn"></div>
-            </div>
-            <hr/>
-            <!-- Button Group -->
-            <div class="row fluid">
-              <!-- Leave Game + Forfeit -->
-              <div class="col">
-                <button class="btn btn-danger btn-block">Leave Game</button>
-              </div>
-              <div class="col">
-                <button class="btn btn-danger btn-block">Forfeit Game</button>
-              </div>  
-            </div>
-            <hr/>
-            <div class="row fluid">
-                <div class="col">
-                  <button class="btn btn-info btn-block">Current Move</button>
+          <div class="col-4" style="border:solid;background-color:grey">
+            <div class="container" >
+              <div class="row">
+                <!-- Status + Player Turn + Button Col -->
+                <div class="col" >
+                  <!-- Status -->
+                  <div class="row" style="align-items: center" >
+                      <h5>Status:</h5>
+                      <div id="status"></div>
+                  </div>
+                  <!-- Player Turn -->
+                  <div class="row">
+                      <h5>Player Turn:</h5>
+                      <div id="playturn"></div>                  
+                  </div>
+                <hr/>
+                  <!-- Buttons -->
+                  <button class="btn btn-block btn-danger" style="font-size:90%">Leave Game</button>
+                  <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
+                  <hr/>
+                  <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
+                  <button class="btn btn-block btn-primary" style="font-size:90%">Confirm Move</button>
                 </div>
+                <!-- Movelist Col -->
                 <div class="col">
-                  <button id="makemove" class="btn btn-success btn-block">Confirm Move</button>
-                </div>  
+                    <h5>Move List:</h5>
+                  <div class="row" style="height:100%">
+                  <div id="pgn" class="boxscroll" style="height:50vh; width: 50%; margin-left:10px"></div>
+                  </div>
+                </div> 
               </div>
-              <hr/>
+            </div>
+            <hr/>
+            <!-- Chat -->
             <div class="col">
               <div class="row">
-                <div id="show_comments"></div>
+                <div id="show_comments" class="boxscroll" style="height: 38vh"></div>
                 <div id="comment-box"></div>
-                  <textarea id="comment" style="width:100%"></textarea>
-                  <input type="button" id="add_status" value="Send Message">
+                <div class="flexContainer">
+                  <input id="comment" placeholder="Message" class="inputField"></input>
+                  <button id="add_status">Send</button>
+                </div>
+                
               </div>
             </div>
           </div>
           <!-- Chessboard -->
-          <div class="col-8 ml-auto" style="background-color: hotpink">
+          <div class="col-8 ml-auto">
             <div class="row">
               <div id="myBoard" style="width: 100vh"></div>
             </div>
