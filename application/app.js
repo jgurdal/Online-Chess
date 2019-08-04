@@ -111,6 +111,7 @@ var renderFlash = 0;
 app.get('/', function (req, res) { 
 	res.render('index', {
     message: req.flash('error'),
+    message: req.flash('createJoinGame'),
     flash: renderFlash
   });
   renderFlash = 0;
@@ -121,7 +122,7 @@ app.get('/about', function (req, res) {
 });
 
 // Temp route to chess.ejs
-app.get('/chess', function (req, res) { 
+app.get('/chess', authenticationMiddleware(), function (req, res) { 
   console.log(fen);
 	res.render('chess/chess.ejs', {
     fen: fen
@@ -217,7 +218,9 @@ function authenticationMiddleware () {
 
       if (req.isAuthenticated()) return next();
       
-      res.redirect('/login')
+      renderFlash = 1;      
+      req.flash('createJoinGame', 'You must have an account and be logged in in order to play');
+      res.redirect('/');
       // res.send("You are not authenticated");
   };
 }
