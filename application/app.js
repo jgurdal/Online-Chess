@@ -8,6 +8,7 @@ var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 var cors = require('cors');
+var flash = require('connect-flash');
 var app = express();
 
 var session = require("express-session");
@@ -15,6 +16,7 @@ var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 var MySQLStore = require("express-mysql-session")(session);
 
+app.use(flash());
 app.use(express.static(__dirname + '/views'));
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
@@ -45,7 +47,7 @@ app.use(session({
   resave: false,
   store: sessionStore,
   saveUninitialized: false,
-  //cookie: { secure: true }
+  cookie: { expires: 600000 }
 }));
 
 app.use(passport.initialize());
@@ -68,6 +70,7 @@ app.use(function(req, res, next) {
 passport.use(new LocalStrategy({
     usernameField: 'username',
     passwordField: 'password'
+    //passReqToCallback: true
   },
   function(username, password, done) {
     // console.log(username);
@@ -87,23 +90,30 @@ passport.use(new LocalStrategy({
           else 
           {
             console.log("Incorrect password!");
-            return done(null, false);
+            renderFlash = 1;
+            return done(null, false, { message: 'That password is incorrect' });
           }
         });
       } 
       // Login failure: email does not exist, therefor no password
       else {
         console.log("Username does not exist!");
-        return done(null, false);
+        renderFlash = 1;
+        return done(null, false, { message: 'That username does not exist' });
       }
     });
   }
 ));
 
 var fen;
+var renderFlash = 0;
 
 app.get('/', function (req, res) { 
-	res.render('index');
+	res.render('index', {
+    message: req.flash('error'),
+    flash: renderFlash
+  });
+  renderFlash = 0;
 });
 
 app.get('/about', function (req, res) { 
@@ -131,7 +141,8 @@ app.get('/login', function (req, res) {
 app.post("/login", passport.authenticate(
   'local',  {
     successRedirect: "/",
-    failureRedirect: "/login"
+    failureRedirect: "/",
+    failureFlash: true
 }));
 
 // To end session once user logs out
