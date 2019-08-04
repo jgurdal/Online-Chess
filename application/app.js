@@ -100,6 +100,8 @@ passport.use(new LocalStrategy({
   }
 ));
 
+var fen;
+
 app.get('/', function (req, res) { 
 	res.render('index');
 });
@@ -110,8 +112,15 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) { 
-	res.render('chess/chess.ejs');
+  console.log(fen);
+	res.render('chess/chess.ejs', {
+    fen: fen
+  });
 });
+// app.get('/chess', function (req, res) { 
+//   console.log(fen);
+//   res.render('chess/chess.ejs');
+// });
 
 
 app.get('/login', function (req, res) {
@@ -174,6 +183,12 @@ app.post("/register", function(req, res) {
   });
 });
 
+app.get("/leave", function (req, res) {
+  fen = req.query.fen;
+  console.log(fen);
+  res.redirect("/");
+});
+
 passport.serializeUser(function(user_id, done) {
   done(null, user_id);
 });
@@ -197,7 +212,7 @@ function authenticationMiddleware () {
 }
 
 io.on('connection',function(socket){  
-  console.log("A user is connected");
+  console.log("A new user is connected");
   socket.on('status added',function(status){
     add_status(status,function(res){
       if(res){
@@ -206,6 +221,9 @@ io.on('connection',function(socket){
           io.emit('error');
       }
     });
+  });
+  socket.on('move', function(msg) {
+    socket.broadcast.emit('move', msg);
   });
 });
 
@@ -226,9 +244,9 @@ var add_status = function (status,callback) {
 
 // For working locally, uncomment two lines below
 // and comment the two lines below that
-// var port = 3000;
+var port = 3000;
 // app.listen(port);
-var port = 80;
+// var port = 80;
 http.listen(port);
 
 console.log('app Listening on port...', port);
