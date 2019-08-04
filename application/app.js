@@ -107,14 +107,17 @@ passport.use(new LocalStrategy({
 
 var fen;
 var renderFlash = 0;
+var createFlash = 0;
 
 app.get('/', function (req, res) { 
 	res.render('index', {
     message: req.flash('error'),
-    message: req.flash('createJoinGame'),
+    createMessage: req.flash('createJoinGame'),
+    createFlash: createFlash,
     flash: renderFlash
   });
   renderFlash = 0;
+  createFlash = 0
 });
 
 app.get('/about', function (req, res) { 
@@ -218,7 +221,7 @@ function authenticationMiddleware () {
 
       if (req.isAuthenticated()) return next();
       
-      renderFlash = 1;      
+      createFlash = 1;      
       req.flash('createJoinGame', 'You must have an account and be logged in in order to play');
       res.redirect('/');
       // res.send("You are not authenticated");

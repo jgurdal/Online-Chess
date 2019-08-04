@@ -133,6 +133,9 @@
   <% if (flash == 1) { %>
   <div class="alert alert-danger" role="alert"><%= message %></div>
   <% } %>
+  <% if (createFlash == 1) { %>
+  <div class="alert alert-warning" role="alert"><%= createMessage %></div>
+  <% } %>
   <!-- Chat + Lobby -->
   <div class="container-fluid">
     <div class="row">
