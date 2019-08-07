@@ -12,7 +12,26 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-</head>
+    <style>
+        .boxscroll {
+          background: #ffffff;
+          color: rgb(0, 0, 0);
+          padding: 15px;
+          width: 100%;
+          overflow: auto;
+          border: 1px solid rgb(116, 1, 1);
+        }
+        .flexContainer {
+          display: flex;
+          width:100%;
+        }
+  
+        .inputField {
+            flex: 1;
+        }
+        
+      </style>
+  </head>
 
 <body>
     <div class="container-fluid">
@@ -45,7 +64,7 @@
                 <div class="col">
                     <h5>Move List:</h5>
                   <div class="row" style="height:100%">
-                  <div id="pgn" class="boxscroll" style="height:50vh; width: 50%; margin-left:10px"></div>
+                  <div id="pgn" class=" boxscroll" style="margin:10 px; margin-bottom: 15px;"></div>
                   </div>
                 </div> 
               </div>
@@ -54,7 +73,7 @@
             <!-- Chat -->
             <div class="col">
               <div class="row">
-                <div id="show_comments" class="boxscroll" style="height: 38vh"></div>
+                <div id="show_comments" class="boxscroll" ></div>
                 <div id="comment-box"></div>
                 <div class="flexContainer">
                   <input id="comment" placeholder="Message" class="inputField"></input>
@@ -200,56 +219,6 @@
       $("#show_comments").append(msg + '<br /><br />');
     });
   </script>
-
-  <!-- <div class="container">
-      <div class="row">
-        <div class="col-sm overflow-auto">
-          <h5>Status:</h5>
-          <div id="status"></div>
-          <h5>Player Turn:</h5>
-          <div id="playturn"></div>
-          <h5>Move List:</h5>
-          <div id="pgn"></div>
-        </div>
-        <div class="col-sm">
-          <div id="myBoard" style="width: 400px"></div>
-        </div>
-      </div>
-      <br>
-      <div class="row">
-          <div class="col-sm">
-          </div>
-          <div class="col-sm">
-              <div id="comment_box" style = "padding:5%;">
-      <textarea id="comment" rows="5" cols="70"></textarea><br /><br />
-      <input type="button" id="add_status" value="Send Message">
-    </div>
-      <div
-       id    = "show_comments"
-       class = "jumbotron"
-       style = "width: 38%;
-                height: 100%;
-                padding: 2%;
-                margin-left:5%;
-                margin-top:-53px;"
-     >
-      </div>
-          </div>
-        </div>
-        <br>
-      <div class="row">
-        <div class="col-sm">
-          <button type="button" class="btn btn-danger">Leave Game</button>
-        </div>
-        <div class="col-sm">
-            <div class="input-group">
-                     <button id="makemove" type="button">Make your move</button>
-                </span>
-             </div>
-        </div>
-      </div>
-    </div> -->
-
 </body>
 
 </html>
