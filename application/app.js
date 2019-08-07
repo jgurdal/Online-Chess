@@ -117,7 +117,7 @@ app.get('/', function (req, res) {
     flash: renderFlash
   });
   renderFlash = 0;
-  createFlash = 0
+  createFlash = 0;
 });
 
 app.get('/about', function (req, res) { 
