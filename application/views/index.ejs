@@ -109,6 +109,31 @@
       float: left;
       color: #999;
     }
+    .boxscroll {
+        background: #ffffff;
+        color: rgb(0, 0, 0);
+        padding: 15px;
+        width: 100%;
+        overflow-y: scroll;
+        border: 1px solid rgb(116, 1, 1);
+        height: 80vh;
+         
+      
+      }
+      .flexContainer {
+        display: flex;
+        width:100%;
+      }
+
+      .inputField {
+          flex: 1;
+      }
+      #commentColor{
+      background-color: #928f8f;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      }
   </style>
 </head>
 
@@ -144,7 +169,7 @@
       <!-- Chat -->
       <div class="col-3">
         <div class="row">
-          <div id="show_comments" class="overflow-auto" style="height: 50%"></div>
+          <div id="show_comments" class="boxscroll"></div>
         </div>
         <div class="row">
           <div class="flexContainer">
@@ -250,6 +275,40 @@
 
           </div>
         </div>
+
+        <!-- Bootstrap scripts -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+          integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+          crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+          integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+          crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+          integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+          crossorigin="anonymous"></script>
+        <script>
+          // Get the modal
+          var modal = document.getElementById('id01');
+
+          // When the user clicks anywhere outside of the modal, close it
+          window.onclick = function (event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          }
+        
+          var socket = io();
+        $("#add_status").click(function() {
+          socket.emit("status added", $("#comment").val());
+        });
+        const messageContainer = document.getElementById('show_comments');
+        socket.on("refresh feed", function(msg) {
+        const messageElement = document.createElement('div');
+        messageElement.id = 'commentColor';
+        messageElement.innerText = msg;
+        messageContainer.append(messageElement);
+      });
+        </script>
       </div>
     </div>
   </div>
