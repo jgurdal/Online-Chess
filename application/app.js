@@ -127,7 +127,7 @@ app.get('/', function (req, res) {
     flash: renderFlash
   });
   renderFlash = 0;
-  createFlash = 0
+  createFlash = 0;
 });
 
 app.get('/about', function (req, res) { 
@@ -141,11 +141,14 @@ app.get('/chess', authenticationMiddleware(), function (req, res) {
     fen: fen
   });
 });
-// app.get('/chess', function (req, res) { 
-//   console.log(fen);
-//   res.render('chess/chess.ejs');
-// });
 
+app.get("/opengames", function(req, res){
+  let db = createConnection();
+      db.query("SELECT * FROM Chess",function(err,rows){
+          if (err) throw err;
+          res.send(rows);
+      });
+});
 
 app.get('/login', function (req, res) {
 	res.render('login');

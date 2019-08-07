@@ -9,6 +9,8 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
   <!-- <link rel="stylesheet" href="index.css"> -->
@@ -107,6 +109,31 @@
       float: left;
       color: #999;
     }
+    .boxscroll {
+        background: #ffffff;
+        color: rgb(0, 0, 0);
+        padding: 15px;
+        width: 100%;
+        overflow-y: scroll;
+        border: 1px solid rgb(116, 1, 1);
+        height: 80vh;
+         
+      
+      }
+      .flexContainer {
+        display: flex;
+        width:100%;
+      }
+
+      .inputField {
+          flex: 1;
+      }
+      #commentColor{
+      background-color: #928f8f;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      }
   </style>
 </head>
 
@@ -142,25 +169,14 @@
     <div class="row">
       <!-- Chat -->
       <div class="col-3">
-        <div class="container">
-          <!-- Simulated text that will be replaced with Socket.io -->
-          <p>Hello. How are you today?</p>
-          <span class="time-right">11:00</span>
+        <div class="row">
+          <div id="show_comments" class="boxscroll"></div>
         </div>
-
-        <div class="container darker">
-          <p>Hey! I'm fine. Thanks for asking!</p>
-          <span class="time-left">11:01</span>
-        </div>
-
-        <div class="container">
-          <p>Sweet! So do you want to play a game of chess?</p>
-          <span class="time-right">11:02</span>
-        </div>
-
-        <div class="container darker">
-          <p>Sounds good to me, let me know when the game is up</p>
-          <span class="time-left">11:05</span>
+        <div class="row">
+          <div class="flexContainer">
+            <input id="comment" placeholder="Message" class="inputField"></input>
+            <button id="add_status">Send</button>
+          </div>
         </div>
         <!-- Will need to add input field and button for sending messages -->
       </div>
@@ -194,7 +210,7 @@
         </table>
 
         <!-- create game works under <a> tag but not <button>  -->
-        <a class="btn btn-block" href="/chess">Create Game</a> 
+        <a class="btn btn-block" href="/chess">Create Game</a>
         <button class="btn btn-block" href="">Join Game</button>
 
       </div>
@@ -238,8 +254,7 @@
               <form action="/register" method="POST">
                 <div class="form-group">
                   <label for="regName">Name:</label>
-                  <input type="text" class="form-control" id="regName" placeholder="Enter your name"
-                    name="name">
+                  <input type="text" class="form-control" id="regName" placeholder="Enter your name" name="name">
                 </div>
                 <div class="form-group">
                   <label for="regUsername">Username:</label>
@@ -258,8 +273,9 @@
                 <button type="submit" class="btn btn-default btn-block">Register</button>
               </form>
             </div>
-
+            
           </div>
+          <!-- Modal Body -->
         </div>
 
         <!-- Bootstrap scripts -->
@@ -282,8 +298,22 @@
               modal.style.display = "none";
             }
           }
+        
+          var socket = io();
+        $("#add_status").click(function() {
+          socket.emit("status added", $("#comment").val());
+        });
+        const messageContainer = document.getElementById('show_comments');
+        socket.on("refresh feed", function(msg) {
+        const messageElement = document.createElement('div');
+        messageElement.id = 'commentColor';
+        messageElement.innerText = msg;
+        messageContainer.append(messageElement);
+      });
         </script>
       </div>
+    </div>
+  </div>
 </body>
 
 </html>
