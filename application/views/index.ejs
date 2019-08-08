@@ -6,6 +6,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+  <!-- CSS  -->
+  <link href="/css/index.css" rel="stylesheet" type="text/css">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -13,86 +16,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-  <!-- <link rel="stylesheet" href="index.css"> -->
-  <style>
-    .navbar-nav {
-      display: inline-block;
-    }
-
-    .navbar-nav>li {
-      display: inline-block;
-    }
-
-    /* Modal */
-    .modal-header {
-      padding: 0;
-    }
-
-    .modal-header .close {
-      padding: 20px 25px;
-    }
-
-    .modal-header ul {
-      border: none;
-    }
-
-    .modal-header ul li {
-      margin: 10px;
-    }
-
-    .modal-header ul li a {
-      border: none;
-      border-radius: 0;
-    }
-
-    .modal-header ul li.active a {
-      color: #e12f27;
-    }
-
-    .modal-header ul li a:hover {
-      border: none;
-    }
-
-    .modal-header ul li a span {
-      margin-left: 10px;
-    }
-
-    .modal-body .form-group {
-      margin-bottom: 10px;
-    }
-
-    .boxscroll {
-        background: #ffffff;
-        color: rgb(0, 0, 0);
-        padding: 15px;
-        width: 100%;
-        overflow-y: scroll;
-        border: 1px solid rgb(116, 1, 1);
-        height: 80vh;
-
-
-      }
-      .flexContainer {
-        display: flex;
-        width:100%;
-      }
-
-      .inputField {
-          flex: 1;
-      }
-      #commentColor{
-      background-color: #928f8f;
-      border-radius: 5px;
-      padding: 10px;
-      margin: 10px 0;
-      }
-  </style>
 </head>
 
 <body>
 
   <!-- Navbar -->
-    <%- include partials/header.ejs -%>
+  <%- include partials/header.ejs -%>
 
 
   <% if (flash == 1) { %>
@@ -117,42 +46,47 @@
       </div>
       <!-- Lobby -->
       <div class="col-9">
-        <h3>Personal Table</h3>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-            <th scope="col">Match #</th>
-            <th scope="col">User</th>
-            <th scope="col">Room Size</th>
-            </tr>
-          </thead>
-          <!-- Enter personal table id -->
-          <tbody id=""></tbody>
-        </table>
-        <hr/>
-        <h3>Global Table</h3>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Match #</th>
-              <th scope="col">User</th>
-              <th scope="col">Room Size</th>
-            </tr>
-          </thead>
-          <tbody id = "tablebody">
-          </tbody>
-        </table>
-        <hr/>
+        <br/>
+        <div  style="border:1px solid black">
+            <h2 style="background-color:#00A6ED">Personal Table</h2>
+            <table class="table table-hover" style="margin-bottom: 0px">
+                <thead>
+                  <tr>
+                    <th scope="col">Match #</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Room Size</th>
+                  </tr>
+                </thead>
+                <!-- Enter personal table id -->
+                <tbody id=""></tbody>
+              </table>        
+        </div>
+        <br/>
+        <div style="border: 1px solid black">
+          <h2 style="background-color:#7FB800">Global Table</h2>
+            <table class="table table-hover" style="margin-bottom: 0px">
+                <thead>
+                  <tr>
+                    <th scope="col">Match #</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Room Size</th>
+                  </tr>
+                </thead>
+                <tbody id="tablebody">
+                </tbody>
+              </table>
+        </div>
+        
         <!-- create game works under <a> tag but not <button>  -->
         <!-- <a class="btn btn-block" href="/chess">Create Game</a> -->
         <div class="row">
           <div class="col">
-              <button data-toggle="modal" data-target="#createGameModal" class="btn btn-block">Create Game</button>
+            <button data-toggle="modal" data-target="#createGameModal" class="btn btn-block">Create Game</button>
           </div>
           <div class="col">
           </div>
-        </div>  
-      <!-- /col-9 -->
+        </div>
+        <!-- /col-9 -->
       </div>
       <!-- /Row -->
     </div>
@@ -161,106 +95,107 @@
   <!-- Create Game Modal -->
   <div class="modal fade" id="createGameModal" role="dialog">
     <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5>Enter Game Information</h5>
-      </div>
-      <div class="modal-body">
-        <form action="/createGame" method="POST">
-          <div class="form-group">
-            <label class="col-form-label" for="room-Name">Room Name: </label>
-            <input type="text" class="form-control" name="game_name" id="room-Name">
-          </div>
-          <!-- Submit on Modal -->
-          <button type="submit" class="btn btn-block">Create Game</button>
-        </form>
-      </div>
-      <!-- /Modal Content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Enter Game Information</h5>
+        </div>
+        <div class="modal-body">
+          <form action="/createGame" method="POST">
+            <div class="form-group">
+              <label class="col-form-label" for="room-Name">Room Name: </label>
+              <input type="text" class="form-control" name="game_name" id="room-Name">
+            </div>
+            <!-- Submit on Modal -->
+            <button type="submit" class="btn btn-block">Create Game</button>
+          </form>
+        </div>
+        <!-- /Modal Content -->
       </div>
       <!-- /Modal Dialog -->
     </div>
     <!-- /Modal -->
   </div>
 
-        <!-- Bootstrap scripts -->
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-          integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-          crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-          integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-          crossorigin="anonymous"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-          integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-          crossorigin="anonymous"></script>
-        <script>
-          // Get the modal
-          var modal = document.getElementById('id01');
+  <!-- Bootstrap scripts -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+  <script>
+    // Get the modal
+    var modal = document.getElementById('id01');
 
-          // When the user clicks anywhere outside of the modal, close it
-          window.onclick = function (event) {
-            if (event.target == modal) {
-              modal.style.display = "none";
-            }
-          }
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
 
-          function opengame(callback) {
-            fetch('/opengames')
-                    .then(res => res.json())
-                    .then(data => obj = data)
-                    .then(() => callback(obj))
-          }
+    function opengame(callback) {
+      fetch('/opengames')
+        .then(res => res.json())
+        .then(data => obj = data)
+        .then(() => callback(obj))
+    }
 
-          opengame(getData);
+    opengame(getData);
 
-          function getData(arrOfObjs){
-            var results = "";
-            arrOfObjs.forEach((x) => {
-                results += "<tr>"
-                results += "<td>" + x.game_id + "</td>";
-                results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
-                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) + "</td>";                
-                results += "</tr>";
-            });
-            document.getElementById("tablebody").innerHTML = results;
-          }
-
-          var socket = io();
-        $("#add_status").click(function() {
-          socket.emit("status added", $("#comment").val());
-          document.getElementById("comment").value = "";
-        });
-
-        const messageContainer = document.getElementById('show_comments');
-
-        socket.on("refresh feed", function(msg) {
-        const messageElement = document.createElement('div');
-        messageElement.id = 'commentColor';
-        messageElement.innerText = msg;
-        messageContainer.append(messageElement);
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-
+    function getData(arrOfObjs) {
+      var results = "";
+      arrOfObjs.forEach((x) => {
+        results += "<tr>"
+        results += "<td>" + x.game_id + "</td>";
+        results += "<td>" + ((x.game_name) ? x.game_name : x.user_id1) + "</td>";
+        results += "<td>" + ((x.user_id2) ? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) +
+          "</td>";
+        results += "</tr>";
       });
-        </script>
-        <script>
-            // Example starter JavaScript for disabling form submissions if there are invalid fields
-            (function() {
-              'use strict';
-              window.addEventListener('load', function() {
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.getElementsByClassName('needs-validation');
-                // Loop over them and prevent submission
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                  form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
-                      event.preventDefault();
-                      event.stopPropagation();
-                    }
-                    form.classList.add('was-validated');
-                  }, false);
-                });
-              }, false);
-            })();
-            </script>
+      document.getElementById("tablebody").innerHTML = results;
+    }
+
+    var socket = io();
+    $("#add_status").click(function () {
+      socket.emit("status added", $("#comment").val());
+      document.getElementById("comment").value = "";
+    });
+
+    const messageContainer = document.getElementById('show_comments');
+
+    socket.on("refresh feed", function (msg) {
+      const messageElement = document.createElement('div');
+      messageElement.id = 'commentColor';
+      messageElement.innerText = msg;
+      messageContainer.append(messageElement);
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+
+    });
+  </script>
+  <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (function () {
+      'use strict';
+      window.addEventListener('load', function () {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function (form) {
+          form.addEventListener('submit', function (event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+  </script>
 </body>
 
 </html>
