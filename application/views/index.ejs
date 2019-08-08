@@ -171,12 +171,12 @@
       <div class="col-3">
         <div class="row">
           <div id="show_comments" class="boxscroll"></div>
-        </div>
-        <div class="row">
           <div class="flexContainer">
             <input id="comment" placeholder="Message" class="inputField"></input>
             <button id="add_status">Send</button>
           </div>
+        </div>
+        <div class="row">
         </div>
         <!-- Will need to add input field and button for sending messages -->
       </div>
@@ -193,7 +193,7 @@
           <tbody id = "tablebody">
           </tbody>
         </table>
-
+        <hr>
         <!-- create game works under <a> tag but not <button>  -->
         <a class="btn btn-block" href="/chess">Create Game</a>
         <button class="btn btn-block" href="">Join Game</button>
@@ -309,12 +309,16 @@
         $("#add_status").click(function() {
           socket.emit("status added", $("#comment").val());
         });
+
         const messageContainer = document.getElementById('show_comments');
+
         socket.on("refresh feed", function(msg) {
         const messageElement = document.createElement('div');
         messageElement.id = 'commentColor';
         messageElement.innerText = msg;
         messageContainer.append(messageElement);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+
       });
         </script>
       </div>
