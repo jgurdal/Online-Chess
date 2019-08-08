@@ -1,0 +1,86 @@
+<div class="navbar sticky-top navbar-dark bg-dark">
+    <a class="navbar-brand" href="#home">Chess</a>
+    <ul class="navbar-nav mr-auto">
+        <li>
+            <a class="nav-link" href="#About">About</a>
+        </li>
+
+    </ul>
+    <% if (isAuthenticated) { %>
+
+    <button class="btn btn-info" onclick="window.location.href = '/logout';">Logout</button>
+    <% } else{ %>
+    <!-- Login button to open Modal -->
+    <button data-toggle="modal" data-target="#modalLoginForm" class="btn btn-info">Login</button>
+    <% } %>
+</div>
+
+<!-- Login / Register Modal-->
+<div class="modal fade" id="modalLoginForm" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Login and Register Tabs -->
+                <ul class="nav nav-tabs ">
+                    <li><a data-toggle="tab" href="#login-form"> Login</a></li>
+                    <li><a data-toggle="tab" href="#registration-form"> Register </a></li>
+                </ul>
+                <!-- X on top right of Modal -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tab-content">
+                    <!-- Login Modal Screen -->
+                    <div id="login-form" class="tab-pane fade, active">
+                        <form action="/login" method="POST">
+                            <div class="form-group">
+                                <label for="email">Username:</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter username"
+                                    name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="pwd">Password:</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter password"
+                                    name="password">
+                            </div>
+                            <button type="submit" class="btn btn-default btn-block">Login</button>
+                        </form>
+                    </div>
+                    <!-- Registration Modal Screen -->
+                    <div id="registration-form" class="tab-pane fade">
+                        <form action="/register" class="needs-validation" novalidate method="POST">
+                            <div class="form-group">
+                                <label for="regName">Name:</label>
+                                <input type="text" class="form-control" id="regName" placeholder="Enter your name"
+                                    name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regUsername">Username:</label>
+                                <input type="text" class="form-control" id="regUsername"
+                                    placeholder="Enter your username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regPassword">Password:</label>
+                                <input type="password" class="form-control" id="regPassword" placeholder="New password"
+                                    name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter email"
+                                    name="email" required>
+                            </div>
+                            <button type="submit" class="btn btn-default btn-block">Register</button>
+                        </form>
+                    </div>
+
+                </div>
+                <!-- Modal Body -->
+            </div>
+            <!-- Modal Content -->
+        </div>
+        <!-- Modal Dialog -->
+    </div>
+    <!-- Game Modal -->
+</div>
