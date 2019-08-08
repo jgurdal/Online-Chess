@@ -61,54 +61,6 @@
       margin-bottom: 10px;
     }
 
-    .container {
-      border: 2px solid #dedede;
-      background-color: #f1f1f1;
-      border-radius: 5px;
-      padding: 10px;
-      margin: 10px 0;
-    }
-
-    /* Darker chat container */
-    .darker {
-      border-color: #ccc;
-      background-color: #ddd;
-    }
-
-    /* Clear floats */
-    .container::after {
-      content: "";
-      clear: both;
-      display: table;
-    }
-
-    /* Style images */
-    .container img {
-      float: left;
-      max-width: 60px;
-      width: 100%;
-      margin-right: 20px;
-      border-radius: 50%;
-    }
-
-    /* Style the right image */
-    .container img.right {
-      float: right;
-      margin-left: 20px;
-      margin-right: 0;
-    }
-
-    /* Style time text */
-    .time-right {
-      float: right;
-      color: #aaa;
-    }
-
-    /* Style time text */
-    .time-left {
-      float: left;
-      color: #999;
-    }
     .boxscroll {
         background: #ffffff;
         color: rgb(0, 0, 0);
@@ -176,8 +128,6 @@
             <button id="add_status">Send</button>
           </div>
         </div>
-        <div class="row">
-        </div>
         <!-- Will need to add input field and button for sending messages -->
       </div>
       <!-- Lobby -->
@@ -196,11 +146,19 @@
         <hr>
         <!-- create game works under <a> tag but not <button>  -->
         <!-- <a class="btn btn-block" href="/chess">Create Game</a> -->
-        <button data-toggle="modal" data-target="#createGameModal" class="btn btn-block">Create Game</button>
-        <button class="btn btn-block" href="">Join Game</button>
-
+        <div class="row">
+          <div class="col">
+              <button data-toggle="modal" data-target="#createGameModal" class="btn btn-block">Create Game</button>
+          </div>
+          <div class="col">
+            <button class="btn btn-block" href="">Join Game</button>
+          </div>
+        </div>  
+      <!-- /col-9 -->
       </div>
+      <!-- /Row -->
     </div>
+    <!-- /Container -->
   </div>
   <!-- Create Game Modal -->
   <div class="modal fade" id="createGameModal" role="dialog">
@@ -331,6 +289,7 @@
           var socket = io();
         $("#add_status").click(function() {
           socket.emit("status added", $("#comment").val());
+          document.getElementById("comment").value = "";
         });
 
         const messageContainer = document.getElementById('show_comments');
