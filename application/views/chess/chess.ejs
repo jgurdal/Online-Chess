@@ -18,18 +18,30 @@
           color: rgb(0, 0, 0);
           padding: 15px;
           width: 100%;
-          overflow: auto;
+          overflow-y: auto;
           border: 1px solid rgb(116, 1, 1);
+          margin-bottom: 10px;
         }
+
         .flexContainer {
           display: flex;
           width:100%;
         }
-  
+
         .inputField {
             flex: 1;
         }
         
+        .pre-scrollable {
+          background: #ffffff;
+          color: rgb(0, 0, 0);
+          padding: 15px;
+          width: 100%;
+          height: 250px;
+          overflow-y: auto;
+          margin-top:auto;
+          border: 1px solid rgb(116, 1, 1);
+        }
       </style>
   </head>
 
@@ -73,8 +85,7 @@
             <!-- Chat -->
             <div class="col">
               <div class="row">
-                <div id="show_comments" class="boxscroll" ></div>
-                <div id="comment-box"></div>
+                <div id="show_comments" class="pre-scrollable" ></div>
                 <div class="flexContainer">
                   <input id="comment" placeholder="Message" class="inputField"></input>
                   <button id="add_status">Send</button>
