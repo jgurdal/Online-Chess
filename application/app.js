@@ -37,7 +37,8 @@ let options = {
     host: 'chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com',
     user: 'root',
     password: 'Team7isthebestteam',
-    database: 'csc667teamchess'
+    database: 'csc667teamchess',
+    multipleStatements: true
 };
 
 var sessionStore = new MySQLStore(options);
@@ -46,8 +47,8 @@ app.use(session({
   secret: 'My super secretive secret',
   resave: false,
   store: sessionStore,
-  saveUninitialized: false,
-  cookie: { expires: 600000 }
+  saveUninitialized: false
+  // cookie: { expires: 600000 }
 }));
 
 app.use(passport.initialize());
@@ -110,6 +111,15 @@ var renderFlash = 0;
 var createFlash = 0;
 
 app.get('/', function (req, res) { 
+  // var username;
+  // if (req.isAuthenticated()) {
+  //   var username = returnUsername(req.session.passport.user.user_id);
+  //   console.log(username);
+  // }
+  // console.log(username);
+  // username = req.user;
+  // console.log(username);
+
 	res.render('index', {
     message: req.flash('error'),
     createMessage: req.flash('createJoinGame'),
@@ -126,7 +136,19 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', authenticationMiddleware(), function (req, res) { 
-  console.log(fen);
+  let user_id1 = req.user.user_id;
+  // console.log(user_id1);
+  // console.log(fen);
+  let db = createConnection();
+  let sql = "INSERT INTO Chess (user_id1) VALUES (?)"
+  db.query(sql, user_id1, function(err, result, field) {
+    if(err) {
+      throw(err);
+    } else {
+      console.log(result);
+    }
+  });
+
 	res.render('chess/chess.ejs', {
     fen: fen
   });
@@ -190,6 +212,8 @@ app.post("/register", function(req, res) {
           if (err) throw err;
 
           const user_id = result[0];
+          //const user_name = result[1];
+          console.log(user_name);
 
           req.login(user_id, function(err) {
             res.send('Account successfully created! Now you can go login!\n')
@@ -221,6 +245,8 @@ function authenticationMiddleware () {
 
     // let userID = req.session.passport.user.user_id;
     // console.log(userID);
+    // let username = req.session.passport.user.username;
+    // console.log(username);
 
       if (req.isAuthenticated()) return next();
       
@@ -229,6 +255,22 @@ function authenticationMiddleware () {
       res.redirect('/');
       // res.send("You are not authenticated");
   };
+}
+
+function returnUsername(user_id) {
+  let db = createConnection();
+  let sql = "SELECT username FROM user WHERE id = ?";
+  db.query(sql, user_id, function (err, result, field) {
+    if (err) {
+      throw err;
+    } else {
+      var user = result[0].username;
+      console.log(user);
+      return user;
+      db.end();
+    // console.log(result[0].username);
+    }
+  });
 }
 
 io.on('connection',function(socket){  
