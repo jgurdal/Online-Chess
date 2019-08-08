@@ -135,13 +135,19 @@ app.get('/about', function (req, res) {
 });
 
 // Temp route to chess.ejs
-app.get('/chess', authenticationMiddleware(), function (req, res) { 
+app.get('/chess', function (req, res) { 
+	res.render('chess/chess.ejs', {
+    fen: fen
+  });
+});
+
+app.post('/createGame', authenticationMiddleware(), function (req, res) {
+  let gameName = req.body.game_name;
   let user_id1 = req.user.user_id;
-  // console.log(user_id1);
-  // console.log(fen);
+  
   let db = createConnection();
-  let sql = "INSERT INTO Chess (user_id1) VALUES (?)"
-  db.query(sql, user_id1, function(err, result, field) {
+  let sql = "INSERT INTO Chess (game_name, user_id1) VALUES (?, ?)"
+  db.query(sql, [gameName, user_id1], function(err, result, field) {
     if(err) {
       throw(err);
     } else {
@@ -149,9 +155,7 @@ app.get('/chess', authenticationMiddleware(), function (req, res) {
     }
   });
 
-	res.render('chess/chess.ejs', {
-    fen: fen
-  });
+  res.redirect('/chess');
 });
 
 app.get("/opengames", function(req, res){

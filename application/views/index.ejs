@@ -168,10 +168,10 @@
         <h5>Enter Game Information</h5>
       </div>
       <div class="modal-body">
-        <form>
+        <form action="/createGame" method="POST">
           <div class="form-group">
             <label class="col-form-label" for="room-Name">Room Name: </label>
-            <input type="text" class="form-control" id="room-Name">
+            <input type="text" class="form-control" name="game_name" id="room-Name">
           </div>
           <!-- Submit on Modal -->
           <button type="submit" class="btn btn-block">Create Game</button>
@@ -280,7 +280,7 @@
                 results += "<tr>"
                 results += "<td>" + x.game_id + "</td>";
                 results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
-                results += "<td>" + ((x.user_id2)? "2/2" : "1/2") + "</td>";
+                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) + "</td>";                
                 results += "</tr>";
             });
             document.getElementById("tablebody").innerHTML = results;
