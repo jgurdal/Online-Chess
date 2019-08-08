@@ -18,7 +18,8 @@ function createConnection() {
     host: 'chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com',
     user: 'root',
     password: 'Team7isthebestteam',
-    database: 'csc667teamchess'
+    database: 'csc667teamchess',
+    // multipleStatements: true
     // host: "localhost",
     // user: "root",
     // password: "",
