@@ -310,9 +310,9 @@ var add_status = function (status,callback) {
 
 // For working locally, uncomment two lines below
 // and comment the two lines below that
-var port = 3000;
+// var port = 3000;
 // app.listen(port);
-// var port = 80;
+var port = 80;
 http.listen(port);
 
 console.log('app Listening on port...', port);
