@@ -136,7 +136,19 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', authenticationMiddleware(), function (req, res) { 
-  console.log(fen);
+  let user_id1 = req.user.user_id;
+  // console.log(user_id1);
+  // console.log(fen);
+  let db = createConnection();
+  let sql = "INSERT INTO Chess (user_id1) VALUES (?)"
+  db.query(sql, user_id1, function(err, result, field) {
+    if(err) {
+      throw(err);
+    } else {
+      console.log(result);
+    }
+  });
+
 	res.render('chess/chess.ejs', {
     fen: fen
   });
