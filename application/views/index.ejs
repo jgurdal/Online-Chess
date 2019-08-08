@@ -124,7 +124,7 @@
         <div class="row">
           <div id="show_comments" class="boxscroll"></div>
           <div class="flexContainer">
-            <input id="comment" placeholder="Message" class="inputField"></input>
+            <input pattern=.{1,} id="comment" placeholder="Message" class="inputField"></input>
             <button id="add_status">Send</button>
           </div>
         </div>
@@ -132,6 +132,20 @@
       </div>
       <!-- Lobby -->
       <div class="col-9">
+        <h3>Personal Table</h3>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+            <th scope="col">Match #</th>
+            <th scope="col">User</th>
+            <th scope="col">Room Size</th>
+            </tr>
+          </thead>
+          <!-- Enter personal table id -->
+          <tbody id=""></tbody>
+        </table>
+        <hr/>
+        <h3>Global Table</h3>
         <table class="table table-hover">
           <thead>
             <tr>
@@ -143,7 +157,7 @@
           <tbody id = "tablebody">
           </tbody>
         </table>
-        <hr>
+        <hr/>
         <!-- create game works under <a> tag but not <button>  -->
         <!-- <a class="btn btn-block" href="/chess">Create Game</a> -->
         <div class="row">
