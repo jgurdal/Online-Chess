@@ -45,38 +45,49 @@
         <!-- Will need to add input field and button for sending messages -->
       </div>
       <!-- Lobby -->
-      <div class="col-9">
-        <br/>
-        <div  style="border:1px solid black">
-            <h2 style="background-color:#00A6ED">Personal Table</h2>
-            <table class="table table-hover" style="margin-bottom: 0px">
-                <thead>
-                  <tr>
-                    <th scope="col">Match #</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Room Size</th>
-                  </tr>
-                </thead>
-                <!-- Enter personal table id -->
-                <tbody id=""></tbody>
-              </table>        
-        </div>
-        <br/>
-        <div style="border: 1px solid black">
-          <h2 style="background-color:#7FB800">Global Table</h2>
-            <table class="table table-hover" style="margin-bottom: 0px">
-                <thead>
-                  <tr>
-                    <th scope="col">Match #</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Room Size</th>
-                  </tr>
-                </thead>
-                <tbody id="tablebody">
-                </tbody>
-              </table>
-        </div>
-        
+      <div class="col-9">        
+        <% if (isAuthenticated) { %>
+          <br/>
+          <div  style="border:1px solid black">
+              <h2 style="background-color:#00A6ED">Personal Table</h2>
+              <table class="table table-hover" style="margin-bottom: 0px">
+                  <thead>
+                    <tr>
+                      <th scope="col">Match Name</th>
+                      <th scope="col">Opponent</th>
+                      <th scope="col">Room Size</th>
+                    </tr>
+                  </thead>
+                  <% if (numOfMatches > 0) { %>
+                  <!-- Enter personal table id -->
+                  <tbody>
+                      <tr>
+                      <% for (var i=0; i < numOfMatches; i++) { %>
+                        <td><%= matchName[i] %></td>
+                        <td><%= opponent[i] %></td>
+                        <td><button type='submit' value='Submit'> Join </button></td>
+                      <% } %>
+                    </tbody>
+                    <% } %>
+                </table>   
+          </div>
+          <% } %> 
+          <br/>
+          <div style="border: 1px solid black">
+              <h2 style="background-color:#7FB800">Global Table</h2>
+                <table class="table table-hover" style="margin-bottom: 0px">
+                    <thead>
+                      <tr>
+                        <th scope="col">Match Name</th>
+                        <th scope="col">Host</th>
+                        <th scope="col">Room Size</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablebody">
+                    </tbody>
+                  </table>
+            </div>
+
         <!-- create game works under <a> tag but not <button>  -->
         <!-- <a class="btn btn-block" href="/chess">Create Game</a> -->
         <div class="row">
@@ -158,6 +169,17 @@
       });
       document.getElementById("tablebody").innerHTML = results;
     }
+          function getData(arrOfObjs){
+            var results = "";
+            arrOfObjs.forEach((x) => {
+                results += "<tr>"
+                results += "<td>" + x.game_name + "</td>";
+                results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
+                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) + "</td>";                
+                results += "</tr>";
+            });
+            document.getElementById("tablebody").innerHTML = results;
+          }
 
     var socket = io();
     $("#add_status").click(function () {
