@@ -296,11 +296,12 @@
           function getData(arrOfObjs){
             var results = "";
             arrOfObjs.forEach((x) => {
-              results += "<td>" + x.game_id + "</td>";
-              results += "<td>" + ((x.game_name)? x.game_name : "Game" + x.game_id) + "</td>";
-              results += "<td>" + ((x.user2_id)? "2/2" : "1/2") + "</td>";
+                results += "<tr>"
+                results += "<td>" + x.game_id + "</td>";
+                results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
+                results += "<td>" + ((x.user_id2)? "2/2" : "1/2") + "</td>";
+                results += "</tr>";
             });
-            results += "</tr>";
             document.getElementById("tablebody").innerHTML = results;
           }
 

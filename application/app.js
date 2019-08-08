@@ -142,13 +142,6 @@ app.get('/chess', authenticationMiddleware(), function (req, res) {
   });
 });
 
-app.get('/chess', authenticationMiddleware(), function (req,res) {
-   let db = createConnection();
-    db.query("INSERT INTO Chess (game_id, game_name, game_fen, user_id1, user_id2) VALUES (NULL, NULL, 'Start', req.session.passport.user.user_id, NULL)", function (err,rows){
-
-    });
-});
-
 app.get("/opengames", function(req, res){
   let db = createConnection();
       db.query("SELECT * FROM Chess",function(err,rows){
