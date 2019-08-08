@@ -1,0 +1,77 @@
+.navbar-nav {
+  display: inline-block;
+}
+
+.navbar-nav>li {
+  display: inline-block;
+}
+
+/* Modal */
+.modal-header {
+  padding: 0;
+}
+
+.modal-header .close {
+  padding: 20px 25px;
+}
+
+.modal-header ul {
+  border: none;
+}
+
+.modal-header ul li {
+  margin: 10px;
+}
+
+.modal-header ul li a {
+  border: none;
+  border-radius: 0;
+}
+
+.modal-header ul li.active a {
+  color: #e12f27;
+}
+
+.modal-header ul li a:hover {
+  border: none;
+}
+
+.modal-header ul li a span {
+  margin-left: 10px;
+}
+
+.modal-body .form-group {
+  margin-bottom: 10px;
+}
+
+.boxscroll {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  padding: 15px;
+  width: 100%;
+  overflow-y: scroll;
+  border: 1px solid rgb(116, 1, 1);
+  height: 80vh;
+}
+
+.flexContainer {
+  display: flex;
+  width: 100%;
+}
+
+.inputField {
+  flex: 1;
+}
+
+#commentColor {
+  background-color: #928f8f;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+h2 {
+  text-align:center;
+  margin-bottom:0px;
+  color: white;
+}
