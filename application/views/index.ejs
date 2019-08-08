@@ -117,25 +117,35 @@
       </div>
       <!-- Lobby -->
       <div class="col-9">
+        <% if (isAuthenticated) { %>
         <h3>Personal Table</h3>
         <table class="table table-hover">
           <thead>
             <tr>
-            <th scope="col">Match #</th>
-            <th scope="col">User</th>
+            <th scope="col">Match Name</th>
+            <th scope="col">Opponent</th>
             <th scope="col">Room Size</th>
             </tr>
           </thead>
-          <!-- Enter personal table id -->
-          <tbody id=""></tbody>
+          <% if (numOfMatches > 0) { %>
+          <tbody>
+            <tr>
+            <% for (var i=0; i < numOfMatches; i++) { %>
+              <td><%= matchName[i] %></td>
+              <td><%= opponent[i] %></td>
+              <td><button type='submit' value='Submit'> Join </button></td>
+            <% } %>
+          </tbody>
+          <% } %>
         </table>
+        <% } %>
         <hr/>
         <h3>Global Table</h3>
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Match #</th>
-              <th scope="col">User</th>
+              <th scope="col">Match Name</th>
+              <th scope="col">Host</th>
               <th scope="col">Room Size</th>
             </tr>
           </thead>
@@ -216,7 +226,7 @@
             var results = "";
             arrOfObjs.forEach((x) => {
                 results += "<tr>"
-                results += "<td>" + x.game_id + "</td>";
+                results += "<td>" + x.game_name + "</td>";
                 results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
                 results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) + "</td>";                
                 results += "</tr>";

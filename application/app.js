@@ -109,6 +109,10 @@ passport.use(new LocalStrategy({
 var fen;
 var renderFlash = 0;
 var createFlash = 0;
+var numOfMatches = 0;
+var matchName = [];
+var opponent = [];
+var userOfCreateGame = [];
 
 app.get('/', function (req, res) { 
   // var username;
@@ -120,15 +124,66 @@ app.get('/', function (req, res) {
   // username = req.user;
   // console.log(username);
 
-	res.render('index', {
-    message: req.flash('error'),
-    createMessage: req.flash('createJoinGame'),
-    createFlash: createFlash,
-    flash: renderFlash
-  });
-  renderFlash = 0;
-  createFlash = 0;
+  if (req.isAuthenticated()) {
+    personalGamesTable(req, res);
+  } else {
+    numOfMatches = 0;
+    matchName = [];
+    opponent = [];
+    res.render('index', {
+      numOfMatches: numOfMatches,
+      matchName: matchName,
+      opponent: opponent,
+      message: req.flash('error'),
+      createMessage: req.flash('createJoinGame'),
+      createFlash: createFlash,
+      flash: renderFlash
+    });
+    renderFlash = 0;
+    createFlash = 0;
+  }
+
 });
+
+function personalGamesTable (req, res) {
+  let db = createConnection();
+  let sql = "SELECT * FROM Chess WHERE user_id1 = ? OR user_id2 = ?";
+  db.query(sql, [req.user.user_id, req.user.user_id], function(err, result, field) {
+    if (err) {
+      throw (err);
+    } else {
+      matchName = [];
+      opponent = [];
+      numOfMatches = result.length;
+      for (var i = 0; i < result.length; i++) {
+        matchName.push(result[i].game_name);
+        if (result[i].user_id2 == null) {
+          opponent.push('None');
+        } else if (result[i].user_id1 == req.user.user_id) {
+          opponent.push(result[i].user_id2);
+        } else if (result[i].user_id2 == req.user.user_id) {
+          opponent.push(result[i].user_id1);
+        }
+      }
+      // console.log(result);
+      res.render('index', {
+        numOfMatches: numOfMatches,
+        matchName: matchName,
+        opponent: opponent,
+        message: req.flash('error'),
+        createMessage: req.flash('createJoinGame'),
+        createFlash: createFlash,
+        flash: renderFlash
+      });
+      renderFlash = 0;
+      createFlash = 0;
+    }
+  });
+}
+
+// app.get('/index', function (req,res) {
+//   res.render('index')
+// });
 
 app.get('/about', function (req, res) { 
 	res.render('about');
