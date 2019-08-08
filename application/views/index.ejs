@@ -117,8 +117,8 @@
         overflow-y: scroll;
         border: 1px solid rgb(116, 1, 1);
         height: 80vh;
-         
-      
+
+
       }
       .flexContainer {
         display: flex;
@@ -189,22 +189,7 @@
               <th scope="col">Room Size</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>User 1</td>
-              <td>1/2</td>
-            </tr>
-            <tr class="table-danger">
-              <th scope="row">2</th>
-              <td>User 2</td>
-              <td>2/2</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>User 3</td>
-              <td>1/2</td>
-            </tr>
+          <tbody id = "tablebody">
           </tbody>
         </table>
 
@@ -272,7 +257,7 @@
                 <button type="submit" class="btn btn-default btn-block">Register</button>
               </form>
             </div>
-            
+
           </div>
           <!-- Modal Body -->
         </div>
@@ -297,7 +282,27 @@
               modal.style.display = "none";
             }
           }
-        
+
+          function opengame(callback) {
+            fetch('/opengames')
+                    .then(res => res.json())
+                    .then(data => obj = data)
+                    .then(() => callback(obj))
+          }
+
+          opengame(getData);
+
+          function getData(arrOfObjs){
+            var results = "";
+            arrOfObjs.forEach((x) => {
+              results += "<td>" + x.game_id + "</td>";
+              results += "<td>" + ((x.game_name)? x.game_name : "Game" + x.game_id) + "</td>";
+              results += "<td>" + ((x.user2_id)? "2/2" : "1/2") + "</td>";
+            });
+            results += "</tr>";
+            document.getElementById("tablebody").innerHTML = results;
+          }
+
           var socket = io();
         $("#add_status").click(function() {
           socket.emit("status added", $("#comment").val());
