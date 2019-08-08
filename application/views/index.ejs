@@ -65,7 +65,7 @@
                       <% for (var i=0; i < numOfMatches; i++) { %>
                         <td><%= matchName[i] %></td>
                         <td><%= opponent[i] %></td>
-                        <td><button type='submit' value='Submit'> Join </button></td>
+                        <td><button type='submit' value='Submit' class="btn btn-block btn-info"> Join </button></td>
                       <% } %>
                     </tbody>
                     <% } %>
@@ -175,7 +175,7 @@
                 results += "<tr>"
                 results += "<td>" + x.game_name + "</td>";
                 results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
-                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) + "</td>";                
+                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit' class='btn btn-success btn-block'> Join </button>")) + "</td>";                
                 results += "</tr>";
             });
             document.getElementById("tablebody").innerHTML = results;
