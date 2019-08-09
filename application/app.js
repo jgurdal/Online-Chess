@@ -37,8 +37,8 @@ let options = {
     host: 'chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com',
     user: 'root',
     password: 'Team7isthebestteam',
-    database: 'csc667teamchess',
-    multipleStatements: true
+    database: 'csc667teamchess'
+    // multipleStatements: true
 };
 
 var sessionStore = new MySQLStore(options);
@@ -191,6 +191,7 @@ app.get('/about', function (req, res) {
 
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) { 
+  var game_id = req.query.id;
 	res.render('chess/chess.ejs', {
     fen: fen
   });
@@ -199,6 +200,7 @@ app.get('/chess', function (req, res) {
 app.post('/createGame', authenticationMiddleware(), function (req, res) {
   let gameName = req.body.game_name;
   let user_id1 = req.user.user_id;
+  var game_id;
   
   let db = createConnection();
   let sql = "INSERT INTO Chess (game_name, user_id1) VALUES (?, ?)"
@@ -206,11 +208,13 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
     if(err) {
       throw(err);
     } else {
-      console.log(result);
+      let sql = "SELECT LAST_INSERT_ID() AS game_id";
+      db.query(sql, function(err, result, field) {
+        game_id = result[0].game_id;
+        res.redirect('/chess/?id=' + game_id);
+      });
     }
   });
-
-  res.redirect('/chess');
 });
 
 app.get("/opengames", function(req, res){
@@ -304,8 +308,6 @@ function authenticationMiddleware () {
 
     // let userID = req.session.passport.user.user_id;
     // console.log(userID);
-    // let username = req.session.passport.user.username;
-    // console.log(username);
 
       if (req.isAuthenticated()) return next();
       
@@ -343,11 +345,23 @@ io.on('connection',function(socket){
       }
     });
   });
+
   socket.on('move', function(msg) {
     socket.broadcast.emit('move', msg);
   });
+
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.id)) {
+      callback('Unique game ID are required.');
+    }
+
+    callback();
+  });
 });
 
+var isRealString = (str) => {
+  return typeof str === 'string' && str.trim().length > 0;
+}
 
 var add_status = function (status,callback) {
 

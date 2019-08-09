@@ -10,6 +10,7 @@
   <script src="chessboard-1.0.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
   <script src="chess.js"></script>
+  <script src="/js/deparam.js"></script>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
@@ -195,6 +196,16 @@
       game.move(msg);
       board.position(game.fen());
     });
+
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('join', params, function(err) {
+      if (err) {
+        alert(err);
+        window.location.href = '/';
+      } else {
+        console.log('No error');
+      }
+    })
 
     $("#add_status").click(function () {
       socket.emit('status added', $("#comment").val());
