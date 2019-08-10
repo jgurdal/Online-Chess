@@ -23,6 +23,7 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true })); // body-parser
 app.use(cors());
+var jsonParser = bodyParser.json();
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -59,10 +60,10 @@ app.use(passport.session());
  */
 const createConnection = require(__dirname + "/mysql/createConnection.js");
 
-// Used to dynamically render login--signup--logout 
-// inside header.ejs. That way the login and signup 
-// options will be visible, and logout will not be 
-// visible when user is not signed in. Vice versa 
+// Used to dynamically render login--signup--logout
+// inside header.ejs. That way the login and signup
+// options will be visible, and logout will not be
+// visible when user is not signed in. Vice versa
 app.use(function(req, res, next) {
   res.locals.isAuthenticated = req.isAuthenticated();
   next();
@@ -86,16 +87,16 @@ passport.use(new LocalStrategy({
           // Login success: email exists, password matches
           if (response == true) {
             return done(null, {user_id: result[0].id});
-          } 
-          // Login failure: email exists, password does not match 
-          else 
+          }
+          // Login failure: email exists, password does not match
+          else
           {
             console.log("Incorrect password!");
             renderFlash = 1;
             return done(null, false, { message: 'That password is incorrect' });
           }
         });
-      } 
+      }
       // Login failure: email does not exist, therefor no password
       else {
         console.log("Username does not exist!");
@@ -114,7 +115,7 @@ var matchName = [];
 var opponent = [];
 var userOfCreateGame = [];
 
-app.get('/', function (req, res) { 
+app.get('/', function (req, res) {
   // var username;
   // if (req.isAuthenticated()) {
   //   var username = returnUsername(req.session.passport.user.user_id);
@@ -185,12 +186,12 @@ function personalGamesTable (req, res) {
 //   res.render('index')
 // });
 
-app.get('/about', function (req, res) { 
+app.get('/about', function (req, res) {
 	res.render('about');
 });
 
 // Temp route to chess.ejs
-app.get('/chess', function (req, res) { 
+app.get('/chess', function (req, res) {
   var game_id = req.query.id;
 	res.render('chess/chess.ejs', {
     fen: fen
@@ -201,7 +202,7 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
   let gameName = req.body.game_name;
   let user_id1 = req.user.user_id;
   var game_id;
-  
+
   let db = createConnection();
   let sql = "INSERT INTO Chess (game_name, user_id1) VALUES (?, ?)"
   db.query(sql, [gameName, user_id1], function(err, result, field) {
@@ -217,6 +218,17 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
   });
 });
 
+app.post('/joinGame', jsonParser, function(req, res){
+  if (req.user) console.log(req.user);
+  if (req.body) console.log(req.body);
+  let db = createConnection();
+  let sql = "UPDATE Chess SET user_id2 = ? WHERE game_id = ?";
+  db.query(sql,[req.user.user_id, req.body.game_id],function(err, result, field) {
+    if (err) throw err;
+    res.redirect('/chess/?id=' + req.body.game_id);
+  });
+});
+
 app.get("/opengames", function(req, res){
   let db = createConnection();
       db.query("SELECT * FROM Chess",function(err,rows){
@@ -229,7 +241,7 @@ app.get('/login', function (req, res) {
 	res.render('login');
 });
 
-// For login app.get authentication 
+// For login app.get authentication
 app.post("/login", passport.authenticate(
   'local',  {
     successRedirect: "/",
@@ -302,7 +314,7 @@ passport.deserializeUser(function(user_id, done) {
   done(null, user_id);
 });
 
-function authenticationMiddleware () {  
+function authenticationMiddleware () {
   return (req, res, next) => {
     console.log(`req.session.passport.user: ${JSON.stringify(req.session.passport)}`);
 
@@ -310,8 +322,8 @@ function authenticationMiddleware () {
     // console.log(userID);
 
       if (req.isAuthenticated()) return next();
-      
-      createFlash = 1;      
+
+      createFlash = 1;
       req.flash('createJoinGame', 'You must have an account and be logged in in order to play');
       res.redirect('/');
       // res.send("You are not authenticated");
@@ -334,7 +346,7 @@ function returnUsername(user_id) {
   });
 }
 
-io.on('connection',function(socket){  
+io.on('connection',function(socket){
   console.log("A new user is connected");
   socket.on('status added',function(status){
     add_status(status,function(res){
