@@ -60,7 +60,7 @@
                 <div id="show_comments" class="pre-scrollable" ></div>
                 <div class="flexContainer">
                   <input id="comment" placeholder="Message" class="inputField"></input>
-                  <button id="add_status">Send</button>
+                  <button id="add_message">Send</button>
                 </div>
                 
               </div>
@@ -207,12 +207,20 @@
       }
     })
 
-    $("#add_status").click(function () {
-      socket.emit('status added', $("#comment").val());
+    $("#add_message").click(function () {
+      socket.emit('createMessage', params, $("#comment").val());
     });
-    socket.on('refresh feed', function (msg) {
-      $("#show_comments").append(msg + '<br /><br />');
+
+    socket.on('newMessage', function (message) {
+      $("#show_comments").append(message + '<br /><br />');
     });
+
+    // $("#add_status").click(function () {
+    //   socket.emit('status added', $("#comment").val());
+    // });
+    // socket.on('refresh feed', function (msg) {
+    //   $("#show_comments").append(msg + '<br /><br />');
+    // });
   </script>
 </body>
 

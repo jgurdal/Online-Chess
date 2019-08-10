@@ -276,7 +276,7 @@ app.post("/register", function(req, res) {
 
           const user_id = result[0];
           //const user_name = result[1];
-          console.log(user_name);
+          // console.log(user_name);
 
           req.login(user_id, function(err) {
             res.send('Account successfully created! Now you can go login!\n')
@@ -355,13 +355,45 @@ io.on('connection',function(socket){
       callback('Unique game ID are required.');
     }
 
+    socket.join(params.id);
+    // socket.leave('The Office Fans');
+
+    // io.emit -> io.to('The Office Fans').emit
+    // socket.broadcast.emit -> socket.broadcast.to('The Office Fans').emit
+    socket.emit('newMessage', 'Welcome!');
+    socket.broadcast.to(params.id).emit('newMessage', 'A new user has joined!');
+
     callback();
+  });
+
+  socket.on('createMessage', function() {
+    // console.log(arguments[0].id);
+    io.to(arguments[0].id).emit('newMessage', arguments[1]);
   });
 });
 
 var isRealString = (str) => {
   return typeof str === 'string' && str.trim().length > 0;
 }
+
+
+// const expect = require('expect');
+// describe('isRealString', () => {
+//   it('should reject non-string values', () => {
+//     var res = isRealString(98);
+//     expect(res).toBe(false);
+//   });
+
+//   it('should reject string with only spaces', () => {
+//     var res = isRealString('    ');
+//     expect(res).toBe(false);
+//   });
+
+//   it('should allow string with non-space characters', () => {
+//     var res = isRealString('  Andrew  ');
+//     expect(res).toBe(true);
+//   });
+// });
 
 var add_status = function (status,callback) {
 
