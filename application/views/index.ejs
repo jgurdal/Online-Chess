@@ -65,7 +65,7 @@
               <tr>
                 <td><%= matchName[i] %></td>
                 <td><%= opponent[i] %></td>
-                <td><button type='submit' value='Submit' class="btn btn-block btn-info"> Rejoin </button></td>
+                <td><button type='submit' value='Submit' class="btn btn-block btn-info" onclick="rejoinGame(<%= matchID[i] %>)"> Rejoin </button></td>
                 <% } %>
             </tbody>
             <% } %>
@@ -140,6 +140,16 @@
 
     function joinGame(data){
       fetch('/joinGame', {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_id": data}),
+    	}).then(res => location.href = res.url);
+    }
+
+    function rejoinGame(data){
+      fetch('/rejoinGame', {
       	method: 'POST',
         headers: {
             'Content-Type': 'application/json',

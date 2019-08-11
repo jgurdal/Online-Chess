@@ -131,9 +131,11 @@ app.get('/', function (req, res) {
     numOfMatches = 0;
     matchName = [];
     opponent = [];
+    matchID = [];
     res.render('index', {
       numOfMatches: numOfMatches,
       matchName: matchName,
+      matchID: matchID,
       opponent: opponent,
       message: req.flash('error'),
       createMessage: req.flash('createJoinGame'),
@@ -155,9 +157,11 @@ function personalGamesTable (req, res) {
     } else {
       matchName = [];
       opponent = [];
+      matchID = [];
       numOfMatches = result.length;
       for (var i = 0; i < result.length; i++) {
         matchName.push(result[i].game_name);
+        matchID.push(result[i].game_id);
         if (result[i].user_id2 == null) {
           opponent.push('None');
         } else if (result[i].user_id1 == req.user.user_id) {
@@ -170,6 +174,7 @@ function personalGamesTable (req, res) {
       res.render('index', {
         numOfMatches: numOfMatches,
         matchName: matchName,
+        matchID: matchID,
         opponent: opponent,
         message: req.flash('error'),
         createMessage: req.flash('createJoinGame'),
@@ -224,6 +229,17 @@ app.post('/joinGame',jsonParser, function(req, res){
   let db = createConnection();
   let sql = "UPDATE Chess SET user_id2 = ? WHERE game_id = ? AND user_id1 <> ?";
   db.query(sql,[req.user.user_id, req.body.game_id, req.user.user_id],function(err, result, field) {
+    if (err) throw err;
+    if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
+  });
+}
+});
+
+app.post('/rejoinGame',jsonParser, function(req, res){
+  if (req.user) {
+  let db = createConnection();
+  let sql = "Select * FROM Chess C WHERE C.game_id = ?";
+  db.query(sql,[req.body.game_id],function(err, result, field) {
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
