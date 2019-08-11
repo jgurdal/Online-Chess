@@ -193,6 +193,7 @@ app.get('/about', function (req, res) {
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) {
   var game_id = req.query.id;
+  console.log(req.query);
 	res.render('chess/chess.ejs', {
     fen: fen
   });
@@ -218,15 +219,15 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
   });
 });
 
-app.post('/joinGame', jsonParser, function(req, res){
-  if (req.user) console.log(req.user);
-  if (req.body) console.log(req.body);
+app.post('/joinGame',jsonParser, function(req, res){
+  if (req.user) {
   let db = createConnection();
-  let sql = "UPDATE Chess SET user_id2 = ? WHERE game_id = ?";
-  db.query(sql,[req.user.user_id, req.body.game_id],function(err, result, field) {
+  let sql = "UPDATE Chess SET user_id2 = ? WHERE game_id = ? AND user_id1 <> ?";
+  db.query(sql,[req.user.user_id, req.body.game_id, req.user.user_id],function(err, result, field) {
     if (err) throw err;
-    res.redirect('/chess/?id=' + req.body.game_id);
+    if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
+}
 });
 
 app.get("/opengames", function(req, res){
