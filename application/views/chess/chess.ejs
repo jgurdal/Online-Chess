@@ -34,7 +34,7 @@
                   <!-- Player Turn -->
                   <div class="row">
                       <h5>Player Turn:</h5>
-                      <div id="playturn"></div>                  
+                      <div id="playturn"></div>
                   </div>
                 <hr/>
                   <!-- Buttons -->
@@ -50,7 +50,7 @@
                   <div class="row" style="height:100%">
                   <div id="pgn" class=" boxscroll" style="margin:10 px; margin-bottom: 15px;"></div>
                   </div>
-                </div> 
+                </div>
               </div>
             </div>
             <hr/>
@@ -62,7 +62,7 @@
                   <input id="comment" placeholder="Message" class="inputField"></input>
                   <button id="add_message">Send</button>
                 </div>
-                
+
               </div>
             </div>
           </div>
@@ -74,11 +74,9 @@
           </div>
         </div>
       </div>
-  
+
   <script>
-    // NOTE: this example uses the chess.js library:
-    // https://github.com/jhlywa/chess.js
-    // var socket = io();
+
 
     var board = null;
     var game = new Chess();
@@ -184,16 +182,21 @@
 
     updateStatus();
 
-    function leaveGame() {
+    function leaveGame(){
       var fen = "?fen="+board.fen();
-      console.log(fen);
-
-      window.location.replace("/leave/"+fen);
+      fetch(location.href, {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_fen": board.fen()}),
+    	})
+      .then(res => location.href = ('/leave' + fen) );
     }
 
     var socket = io();
     socket.on('move', function (msg) {
-      game.move(msg);
+        game.move(msg);
       board.position(game.fen());
     });
 

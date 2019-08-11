@@ -187,10 +187,6 @@ function personalGamesTable (req, res) {
   });
 }
 
-// app.get('/index', function (req,res) {
-//   res.render('index')
-// });
-
 app.get('/about', function (req, res) {
 	res.render('about');
 });
@@ -198,6 +194,13 @@ app.get('/about', function (req, res) {
 // Temp route to chess.ejs
 app.get('/chess', function (req, res) {
   var game_id = req.query.id;
+  let db = createConnection();
+  let sql = "SELECT C.game_fen FROM Chess C WHERE game_id = ?";
+  db.query(sql,[game_id],function(err, result, field) {
+    if (err) throw err;
+    fen = result[0].game_fen;
+    console.log(fen);
+  });
   console.log(req.query);
 	res.render('chess/chess.ejs', {
     fen: fen
@@ -222,6 +225,19 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
       });
     }
   });
+});
+
+app.post('/chess', jsonParser, function (req, res) {
+  var game_id = req.query.id;
+  console.log(req.query.id);
+  console.log(req.body.game_fen);
+  let db = createConnection();
+  let sql = "UPDATE Chess C SET C.game_fen  = ? WHERE game_id = ?";
+  db.query(sql,[req.body.game_fen, game_id],function(err, result, field) {
+    if (err) throw err;
+    if (result.affectedRows != 0) res.send("success");
+  });
+
 });
 
 app.post('/joinGame',jsonParser, function(req, res){
