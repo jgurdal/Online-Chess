@@ -42,7 +42,7 @@
                   <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
                   <hr/>
                   <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
-                  <button class="btn btn-block btn-primary" style="font-size:90%">Confirm Move</button>
+                  <button class="btn btn-block btn-primary" style="font-size:90%" onclick="makeMove()">Confirm Move</button>
                 </div>
                 <!-- Movelist Col -->
                 <div class="col">
@@ -87,8 +87,8 @@
       var x = game.load("<%= fen %>");
       console.log(x);
       console.log("Logging fen received by chess.ejs: %s","<%= fen %>" );
-      console.log("<%= user_id1 %>");
-      console.log("<%= user_id2 %>");
+      console.log("<%= user_id %>");
+      console.log("<%= player %>");
       console.log(game.ascii());
     }
 
@@ -99,7 +99,9 @@
       // only pick up pieces for the side to move
       if (
         (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-        (game.turn() === "b" && piece.search(/^w/) !== -1)
+        (game.turn() === "b" && piece.search(/^w/) !== -1)||
+        (game.turn() === "w" && <%= player %> == 2) ||
+        (game.turn() === "b" && <%= player %> == 1)
       ) {
         return false;
       }
@@ -118,7 +120,6 @@
       else socket.emit('move', move);
       //else socket.emit("move", move);
 
-      console.log(game.ascii());
       updateStatus();
       // var fen = board.fen();
       // console.log(fen);
@@ -190,6 +191,16 @@
       .then(res => location.href = ('/leave') );
     }
 
+    function makeMove(){
+      fetch(location.href, {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_fen": game.fen()}),
+    	});
+    }
+
     var socket = io();
     socket.on('move', function (msg) {
       game.move(msg);
@@ -207,7 +218,7 @@
     })
 
     $("#add_message").click(function () {
-      socket.emit('createMessage', params, $("#comment").val());
+      socket.emit('createMessage', params, "User <%= user_id %> :  " + ($("#comment").val()));
     });
 
     socket.on('newMessage', function (message) {

@@ -190,9 +190,8 @@ app.get('/about', function (req, res) {
 	res.render('about');
 });
 
-var fen, user_id1, user_id2;
+var fen, user_id, player;
 
-// Temp route to chess.ejs
 app.get('/chess', jsonParser, function (req, res) {
   var game_id = req.query.id;
   let db = createConnection();
@@ -200,10 +199,9 @@ app.get('/chess', jsonParser, function (req, res) {
   db.query(sql,[game_id],function(err, result, field) {
     if (err) throw err;
     fen = result[0].game_fen;
-    user_id1 = result[0].user_id1;
-    user_id2 = result[0].user_id2;
+    user_id = req.user.user_id;
     res.render('chess/chess.ejs', {
-      fen: fen, user_id1: user_id1, user_id2: user_id2
+      fen: fen, user_id: user_id, player: (result[0].user_id1 == req.user.user_id)? 1: 2
     });
   });
 });
@@ -419,6 +417,12 @@ io.on('connection',function(socket){
 var isRealString = (str) => {
   return typeof str === 'string' && str.trim().length > 0;
 }
+
+
+
+    // Just you and the server (socket.emit)
+    // A message from point to everyone, except you (socket.broadcast.emit)
+    // Everyone gets the message, you, server, and all broadcast users (io.emit)
 
 
 // const expect = require('expect');
