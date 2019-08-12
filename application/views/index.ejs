@@ -160,8 +160,11 @@
 
     var socket = io();
     $("#add_status").click(function () {
-      socket.emit("status added", $("#comment").val());
-      document.getElementById("comment").value = "";
+      if(document.getElementById("comment").value == "") { alert('Comment Needed'); return }
+      else {
+        socket.emit("status added", $("#comment").val());
+        document.getElementById("comment").value = "";
+      }
     });
 
     const messageContainer = document.getElementById('show_comments');
