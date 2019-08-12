@@ -174,7 +174,8 @@
         position: '<%= fen %>',
         onDragStart: onDragStart,
         onDrop: onDrop,
-        onSnapEnd: onSnapEnd
+        onSnapEnd: onSnapEnd,
+        orientation: (<%= player %> == 2) ? 'black': 'white'
       };
       board = Chessboard("myBoard", config);
 
