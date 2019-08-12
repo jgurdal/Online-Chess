@@ -107,7 +107,6 @@ passport.use(new LocalStrategy({
   }
 ));
 
-var fen;
 var renderFlash = 0;
 var createFlash = 0;
 var numOfMatches = 0;
@@ -191,19 +190,21 @@ app.get('/about', function (req, res) {
 	res.render('about');
 });
 
+var fen, user_id1, user_id2;
+
 // Temp route to chess.ejs
-app.get('/chess', function (req, res) {
+app.get('/chess', jsonParser, function (req, res) {
   var game_id = req.query.id;
   let db = createConnection();
-  let sql = "SELECT C.game_fen FROM Chess C WHERE game_id = ?";
+  let sql = "SELECT * FROM Chess C WHERE game_id = ?";
   db.query(sql,[game_id],function(err, result, field) {
     if (err) throw err;
     fen = result[0].game_fen;
-    console.log(fen);
-  });
-  console.log(req.query);
-	res.render('chess/chess.ejs', {
-    fen: fen
+    user_id1 = result[0].user_id1;
+    user_id2 = result[0].user_id2;
+    res.render('chess/chess.ejs', {
+      fen: fen, user_id1: user_id1, user_id2: user_id2
+    });
   });
 });
 
@@ -334,8 +335,6 @@ app.post("/register", function(req, res) {
 });
 
 app.get("/leave", function (req, res) {
-  fen = req.query.fen;
-  console.log(fen);
   res.redirect("/");
 });
 

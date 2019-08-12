@@ -83,8 +83,12 @@
     var $playturn = $("#playturn");
     var $pgn = $("#pgn");
 
-    <% if (fen != null)  %> {
-      game.load("<%= fen %>");
+    <% if (fen != 'start')  %> {
+      var x = game.load("<%= fen %>");
+      console.log(x);
+      console.log("Logging fen received by chess.ejs: %s","<%= fen %>" );
+      console.log("<%= user_id1 %>");
+      console.log("<%= user_id2 %>");
       console.log(game.ascii());
     }
 
@@ -163,16 +167,7 @@
 
       $("#pgn").scrollTop($("#pgn")[0].scrollHeight);
     }
-    <% if (fen == null) { %>
-      var config = {
-        draggable: true,
-        position: "start",
-        // onDragStart: onDragStart,
-        onDrop: onDrop//,
-        // onSnapEnd: onSnapEnd
-      };
-      board = Chessboard("myBoard", config);
-    <% } else{ %>
+
       var config = {
         draggable: true,
         position: '<%= fen %>',
@@ -181,12 +176,10 @@
         onSnapEnd: onSnapEnd
       };
       board = Chessboard("myBoard", config);
-    <% } %>
 
     updateStatus();
 
     function leaveGame(){
-      var fen = "?fen="+board.fen();
       fetch(location.href, {
       	method: 'POST',
         headers: {
@@ -194,7 +187,7 @@
         },
       	body: JSON.stringify({"game_fen": game.fen()}),
     	})
-      .then(res => location.href = ('/leave' + fen) );
+      .then(res => location.href = ('/leave') );
     }
 
     var socket = io();
