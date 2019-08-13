@@ -7,7 +7,7 @@
 
     </ul>
     <% if (isAuthenticated) { %>
-
+    <button data-toggle="modal" data-target="#createGameModal" class="btn btn-success">Create Game</button>&nbsp;
     <button class="btn btn-info" onclick="window.location.href = '/logout';">Logout</button>
     <% } else{ %>
     <!-- Login button to open Modal -->
@@ -83,4 +83,29 @@
         <!-- Modal Dialog -->
     </div>
     <!-- Game Modal -->
+</div>
+
+
+<!-- Create Game Modal -->
+<div class="modal fade" id="createGameModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Enter Game Information</h5>
+            </div>
+            <div class="modal-body">
+                <form action="/createGame" method="POST">
+                    <div class="form-group">
+                        <label class="col-form-label" for="room-Name">Room Name: </label>
+                        <input type="text" class="form-control" name="game_name" id="room-Name" required>
+                    </div>
+                    <!-- Submit on Modal -->
+                    <button type="submit" class="btn btn-block">Create Game</button>
+                </form>
+            </div>
+            <!-- /Modal Content -->
+        </div>
+        <!-- /Modal Dialog -->
+    </div>
+    <!-- /Modal -->
 </div>

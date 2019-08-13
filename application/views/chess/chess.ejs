@@ -10,6 +10,7 @@
   <script src="chessboard-1.0.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
   <script src="chess.js"></script>
+  <script src="/js/deparam.js"></script>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
@@ -33,7 +34,7 @@
                   <!-- Player Turn -->
                   <div class="row">
                       <h5>Player Turn:</h5>
-                      <div id="playturn"></div>                  
+                      <div id="playturn"></div>
                   </div>
                 <hr/>
                   <!-- Buttons -->
@@ -41,7 +42,7 @@
                   <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
                   <hr/>
                   <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
-                  <button class="btn btn-block btn-primary" style="font-size:90%">Confirm Move</button>
+                  <button class="btn btn-block btn-primary" style="font-size:90%" onclick="makeMove()">Confirm Move</button>
                 </div>
                 <!-- Movelist Col -->
                 <div class="col">
@@ -49,7 +50,7 @@
                   <div class="row" style="height:100%">
                   <div id="pgn" class=" boxscroll" style="margin:10 px; margin-bottom: 15px;"></div>
                   </div>
-                </div> 
+                </div>
               </div>
             </div>
             <hr/>
@@ -59,9 +60,9 @@
                 <div id="show_comments" class="pre-scrollable" ></div>
                 <div class="flexContainer">
                   <input id="comment" placeholder="Message" class="inputField"></input>
-                  <button id="add_status">Send</button>
+                  <button id="add_message">Send</button>
                 </div>
-                
+
               </div>
             </div>
           </div>
@@ -73,18 +74,23 @@
           </div>
         </div>
       </div>
-  
+
   <script>
-    // NOTE: this example uses the chess.js library:
-    // https://github.com/jhlywa/chess.js
-    // var socket = io();
 
     var board = null;
     var game = new Chess();
     var $status = $("#status");
     var $playturn = $("#playturn");
-    var $fen = $("#fen");
     var $pgn = $("#pgn");
+
+    <% if (fen != 'start')  %> {
+      var x = game.load("<%= fen %>");
+      console.log(x);
+      console.log("Logging fen received by chess.ejs: %s","<%= fen %>" );
+      console.log("<%= user_id %>");
+      console.log("<%= player %>");
+      console.log(game.ascii());
+    }
 
     function onDragStart(source, piece, position, orientation) {
       // do not pick up pieces if the game is over
@@ -93,7 +99,9 @@
       // only pick up pieces for the side to move
       if (
         (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-        (game.turn() === "b" && piece.search(/^w/) !== -1)
+        (game.turn() === "b" && piece.search(/^w/) !== -1)||
+        (game.turn() === "w" && <%= player %> == 2) ||
+        (game.turn() === "b" && <%= player %> == 1)
       ) {
         return false;
       }
@@ -156,38 +164,42 @@
 
       $status.html(status);
       $playturn.html(playturn);
-      $fen.html(game.fen());
       $pgn.html(game.pgn());
 
       $("#pgn").scrollTop($("#pgn")[0].scrollHeight);
     }
-    <% if (fen == null) { %>
-      var config = {
-        draggable: true,
-        position: "start",
-        // onDragStart: onDragStart,
-        onDrop: onDrop//,
-        // onSnapEnd: onSnapEnd
-      };
-      board = Chessboard("myBoard", config);
-    <% } else{ %>
+
       var config = {
         draggable: true,
         position: '<%= fen %>',
         onDragStart: onDragStart,
         onDrop: onDrop,
-        onSnapEnd: onSnapEnd
+        onSnapEnd: onSnapEnd,
+        orientation: (<%= player %> == 2) ? 'black': 'white'
       };
       board = Chessboard("myBoard", config);
-    <% } %>
 
     updateStatus();
 
-    function leaveGame() {
-      var fen = "?fen="+board.fen();
-      console.log(fen);
+    function leaveGame(){
+      fetch(location.href, {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_fen": game.fen()}),
+    	})
+      .then(res => location.href = ('/leave') );
+    }
 
-      window.location.replace("/leave/"+fen);
+    function makeMove(){
+      fetch(location.href, {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_fen": game.fen()}),
+    	});
     }
 
     var socket = io();
@@ -196,12 +208,30 @@
       board.position(game.fen());
     });
 
-    $("#add_status").click(function () {
-      socket.emit('status added', $("#comment").val());
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('join', params, function(err) {
+      if (err) {
+        alert(err);
+        window.location.href = '/';
+      } else {
+        console.log('No error');
+      }
+    })
+
+    $("#add_message").click(function () {
+      socket.emit('createMessage', params, "User <%= user_id %> :  " + ($("#comment").val()));
     });
-    socket.on('refresh feed', function (msg) {
-      $("#show_comments").append(msg + '<br /><br />');
+
+    socket.on('newMessage', function (message) {
+      $("#show_comments").append(message + '<br /><br />');
     });
+
+    // $("#add_status").click(function () {
+    //   socket.emit('status added', $("#comment").val());
+    // });
+    // socket.on('refresh feed', function (msg) {
+    //   $("#show_comments").append(msg + '<br /><br />');
+    // });
   </script>
 </body>
 

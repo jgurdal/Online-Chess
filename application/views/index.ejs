@@ -38,64 +38,54 @@
         <div class="row">
           <div id="show_comments" class="boxscroll"></div>
           <div class="flexContainer">
-            <input pattern=.{1,} id="comment" placeholder="Message" class="inputField"></input>
+            <input id="comment" placeholder="Message" class="inputField"></input>
             <button id="add_status">Send</button>
           </div>
         </div>
         <!-- Will need to add input field and button for sending messages -->
       </div>
       <!-- Lobby -->
-      <div class="col-9">        
+      <div class="col-9">
         <% if (isAuthenticated) { %>
-          <br/>
-          <div  style="border:1px solid black">
-              <h2 style="background-color:#00A6ED">Personal Table</h2>
-              <table class="table table-hover" style="margin-bottom: 0px">
-                  <thead>
-                    <tr>
-                      <th scope="col" width="33%">Match Name</th>
-                      <th scope="col" width="33%">Opponent</th>
-                      <th scope="col" width="33%">Room Size</th>
-                    </tr>
-                  </thead>
-                  <% if (numOfMatches > 0) { %>
-                  <!-- Enter personal table id -->
-                  <tbody>
-                      <tr>
-                      <% for (var i=0; i < numOfMatches; i++) { %>
-                        <td><%= matchName[i] %></td>
-                        <td><%= opponent[i] %></td>
-                        <td><button type='submit' value='Submit' class="btn btn-block btn-info"> Join </button></td>
-                      <% } %>
-                    </tbody>
-                    <% } %>
-                </table>   
-          </div>
-          <% } %> 
-          <br/>
-          <div style="border: 1px solid black">
-              <h2 style="background-color:#7FB800">Global Table</h2>
-                <table class="table table-hover" style="margin-bottom: 0px">
-                    <thead>
-                      <tr>
-                        <th scope="col" width="33%">Match Name</th>
-                        <th scope="col" width="33%">Host</th>
-                        <th scope="col" width="33%">Room Size</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tablebody">
-                    </tbody>
-                  </table>
-            </div>
-
-        <!-- create game works under <a> tag but not <button>  -->
-        <!-- <a class="btn btn-block" href="/chess">Create Game</a> -->
-        <div class="row">
-          <div class="col">
-            <button data-toggle="modal" data-target="#createGameModal" class="btn btn-block">Create Game</button>
-          </div>
-          <div class="col">
-          </div>
+        <br />
+        <!-- TODO: Add fixed size to the tables, look into  using avail screen height -->
+        <div style="border:1px solid black; overflow:auto;">
+          <h2 style="background-color:#00A6ED">Personal Table</h2>
+          <table class="table table-hover" style="margin-bottom: 0px">
+            <thead>
+              <tr>
+                <th scope="col" width="33%">Match Name</th>
+                <th scope="col" width="33%">Opponent</th>
+                <th scope="col" width="33%">Room Size</th>
+              </tr>
+            </thead>
+            <% if (numOfMatches > 0) { %>
+            <tbody>
+              <% for (var i=0; i < numOfMatches; i++) { %>
+              <tr>
+                <td><%= matchName[i] %></td>
+                <td><%= opponent[i] %></td>
+                <td><button type='submit' value='Submit' class="btn btn-block btn-info" onclick="rejoinGame(<%= matchID[i] %>)"> Rejoin </button></td>
+                <% } %>
+            </tbody>
+            <% } %>
+          </table>
+        </div>
+        <% } %>
+        <br />
+        <div style="border: 1px solid black;overflow:auto">
+          <h2 style="background-color:#7FB800">Global Table</h2>
+          <table class="table table-hover" style="margin-bottom: 0px">
+            <thead>
+              <tr>
+                <th scope="col" width="33%">Match Name</th>
+                <th scope="col" width="33%">Host</th>
+                <th scope="col" width="33%">Room Size</th>
+              </tr>
+            </thead>
+            <tbody id="tablebody">
+            </tbody>
+          </table>
         </div>
         <!-- /col-9 -->
       </div>
@@ -103,29 +93,7 @@
     </div>
     <!-- /Container -->
   </div>
-  <!-- Create Game Modal -->
-  <div class="modal fade" id="createGameModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5>Enter Game Information</h5>
-        </div>
-        <div class="modal-body">
-          <form action="/createGame" method="POST">
-            <div class="form-group">
-              <label class="col-form-label" for="room-Name">Room Name: </label>
-              <input type="text" class="form-control" name="game_name" id="room-Name">
-            </div>
-            <!-- Submit on Modal -->
-            <button type="submit" class="btn btn-block">Create Game</button>
-          </form>
-        </div>
-        <!-- /Modal Content -->
-      </div>
-      <!-- /Modal Dialog -->
-    </div>
-    <!-- /Modal -->
-  </div>
+
 
   <!-- Bootstrap scripts -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -140,7 +108,6 @@
   <script>
     // Get the modal
     var modal = document.getElementById('id01');
-
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
       if (event.target == modal) {
@@ -159,32 +126,45 @@
 
     function getData(arrOfObjs) {
       var results = "";
-      arrOfObjs.forEach((x) => {
+      var arg = "";
+      arrOfObjs.forEach(x => {
         results += "<tr>"
-        results += "<td>" + x.game_id + "</td>";
-        results += "<td>" + ((x.game_name) ? x.game_name : x.user_id1) + "</td>";
-        results += "<td>" + ((x.user_id2) ? "2/2" : ("<button type='submit' value='Submit'> Join </button>")) +
-          "</td>";
+        results += "<td>" + x.game_name + "</td>";
+        results += "<td>" + (x.user_id1) + "</td>";
+        results += "<td>" + ((x.user_id2) ? "2/2" : (
+          "<button type='submit' value='Submit' onclick='joinGame(" + JSON.stringify(x.game_id) + ")' class='btn btn-success btn-block'> Join </button>")) + "</td>";
         results += "</tr>";
       });
       document.getElementById("tablebody").innerHTML = results;
     }
-          function getData(arrOfObjs){
-            var results = "";
-            arrOfObjs.forEach((x) => {
-                results += "<tr>"
-                results += "<td>" + x.game_name + "</td>";
-                results += "<td>" + ((x.game_name)? x.game_name : x.user_id1) + "</td>";
-                results += "<td>" + ((x.user_id2)? "2/2" : ("<button type='submit' value='Submit' class='btn btn-success btn-block'> Join </button>")) + "</td>";                
-                results += "</tr>";
-            });
-            document.getElementById("tablebody").innerHTML = results;
-          }
+
+    function joinGame(data){
+      fetch('/joinGame', {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_id": data}),
+    	}).then(res => location.href = res.url);
+    }
+
+    function rejoinGame(data){
+      fetch('/rejoinGame', {
+      	method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+      	body: JSON.stringify({"game_id": data}),
+    	}).then(res => location.href = res.url);
+    }
 
     var socket = io();
     $("#add_status").click(function () {
-      socket.emit("status added", $("#comment").val());
-      document.getElementById("comment").value = "";
+      if(document.getElementById("comment").value == "") { alert('Comment Needed'); return }
+      else {
+        socket.emit("status added", $("#comment").val());
+        document.getElementById("comment").value = "";
+      }
     });
 
     const messageContainer = document.getElementById('show_comments');
