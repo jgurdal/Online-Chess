@@ -13,225 +13,244 @@
   <script src="/js/deparam.js"></script>
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
 
-  </head>
+</head>
 
 <body>
-    <div class="container-fluid">
-        <!-- Chat + Movelist + Controls -->
-        <div class="row ">
-          <div class="col-4" style="border:solid;background-color:grey">
-            <div class="container" >
-              <div class="row">
-                <!-- Status + Player Turn + Button Col -->
-                <div class="col" >
-                  <!-- Status -->
-                  <div class="row" style="align-items: center" >
-                      <h5>Status:</h5>
-                      <div id="status"></div>
-                  </div>
-                  <!-- Player Turn -->
-                  <div class="row">
-                      <h5>Player Turn:</h5>
-                      <div id="playturn"></div>
-                  </div>
-                <hr/>
-                  <!-- Buttons -->
-                  <button class="btn btn-block btn-danger" style="font-size:90%" onclick="leaveGame()">Leave Game</button>
-                  <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
-                  <hr/>
-                  <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
-                  <button class="btn btn-block btn-primary" style="font-size:90%" onclick="makeMove()">Confirm Move</button>
-                </div>
-                <!-- Movelist Col -->
-                <div class="col">
-                    <h5>Move List:</h5>
-                  <div class="row" style="height:100%">
-                  <div id="pgn" class=" boxscroll" style="margin:10 px; margin-bottom: 15px;"></div>
-                  </div>
-                </div>
+  <div class="container-fluid">
+    <!-- Chat + Movelist + Controls -->
+    <div class="row ">
+      <div class="col-4" style="border:solid;background-color:grey">
+        <div class="container" >
+          <div class="row">
+            <!-- Status + Player Turn + Button Col -->
+            <div class="col" >
+              <!-- Status -->
+              <div class="row" style="align-items: center" >
+                <h5>Status:</h5>
+                <div id="status"></div>
               </div>
+              <!-- Player Turn -->
+              <div class="row">
+                <h5>Player Turn:</h5>
+                <div id="playturn"></div>
+              </div>
+              <hr/>
+              <!-- Buttons -->
+              <button class="btn btn-block btn-danger" style="font-size:90%" onclick="leaveGame()">Leave Game</button>
+              <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
+              <hr/>
+              <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
+              <button class="btn btn-block btn-primary" style="font-size:90%" onclick="makeMove()">Confirm Move</button>
             </div>
-            <hr/>
-            <!-- Chat -->
+            <!-- Movelist Col -->
             <div class="col">
-              <div class="row">
-                <div id="show_comments" class="pre-scrollable" ></div>
-                <div class="flexContainer">
-                  <input id="comment" placeholder="Message" class="inputField"></input>
-                  <button id="add_message">Send</button>
-                </div>
-
+              <h5>Move List:</h5>
+              <div class="row" style="height:100%">
+                <div id="pgn" class=" boxscroll" style="margin:10 px; margin-bottom: 15px;"></div>
               </div>
-            </div>
-          </div>
-          <!-- Chessboard -->
-          <div class="col-8 ml-auto">
-            <div class="row">
-              <div id="myBoard" style="width: 100vh"></div>
             </div>
           </div>
         </div>
+        <hr/>
+        <!-- Chat -->
+        <div class="col">
+          <div class="row">
+            <div id="chatbox" class="pre-scrollable" ></div>
+            <div class="flexContainer">
+              <input id="message" placeholder="Message" class="inputField"></input>
+              <button id="sendMessage">Send</button>
+            </div>
+
+          </div>
+        </div>
       </div>
+      <!-- Chessboard -->
+      <div class="col-8 ml-auto">
+        <div class="row">
+          <div id="myBoard" style="width: 100vh"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
 
-    var board = null;
-    var game = new Chess();
-    var $status = $("#status");
-    var $playturn = $("#playturn");
-    var $pgn = $("#pgn");
+  var board = null;
+  var game = new Chess();
+  var $status = $("#status");
+  var $playturn = $("#playturn");
+  var $pgn = $("#pgn");
 
-    <% if (fen != 'start')  %> {
-      var x = game.load("<%= fen %>");
-      console.log(x);
-      console.log("Logging fen received by chess.ejs: %s","<%= fen %>" );
-      console.log("<%= user_id %>");
-      console.log("<%= player %>");
-      console.log(game.ascii());
+  var x = game.load("<%= fen %>");
+  game.header((<%= player %> == 2) ? 'Black': 'White');
+  console.log(x);
+  console.log("Logging fen received by chess.ejs: %s","<%= fen %>" );
+  console.log("The player id is " + <%= user_id %>);
+  console.log("The player number is " + <%= player %>);
+  console.log(game.ascii());
+  console.log(game.pgn());
+
+  function onDragStart(source, piece, position, orientation) {
+    // do not pick up pieces if the game is over
+    if (game.game_over()) return false;
+
+    // only pick up pieces for the side to move
+    if (
+      (game.turn() === "w" && piece.search(/^b/) !== -1) ||
+      (game.turn() === "b" && piece.search(/^w/) !== -1) ||
+      (game.turn() === "w" && <%= player %> == 2) ||
+      (game.turn() === "b" && <%= player %> == 1)
+    ) {
+      return false;
     }
+  }
 
-    function onDragStart(source, piece, position, orientation) {
-      // do not pick up pieces if the game is over
-      if (game.game_over()) return false;
+  function onDrop(source, target) {
+    // see if the move is legal
+    var move = game.move({
+      from: source,
+      to: target,
+      promotion: "q" // NOTE: always promote to a queen for example simplicity
+    });
 
-      // only pick up pieces for the side to move
-      if (
-        (game.turn() === "w" && piece.search(/^b/) !== -1) ||
-        (game.turn() === "b" && piece.search(/^w/) !== -1)||
-        (game.turn() === "w" && <%= player %> == 2) ||
-        (game.turn() === "b" && <%= player %> == 1)
-      ) {
-        return false;
-      }
+    // illegal move
+    if (move === null) return "snapback";
+    else {
+      socket.emit('moveMade', move, <%= game_id %>);
+      makeMove();
     }
-
-    function onDrop(source, target) {
-      // see if the move is legal
-      var move = game.move({
-        from: source,
-        to: target,
-        promotion: "q" // NOTE: always promote to a queen for example simplicity
-      });
-
-      // illegal move
-      if (move === null) return "snapback";
-      else socket.emit('move', move);
-      //else socket.emit("move", move);
-
-      updateStatus();
-      // var fen = board.fen();
-      // console.log(fen);
-    }
-
-
-    // update the board position after the piece snap
-    // for castling, en passant, pawn promotion
-    function onSnapEnd() {
-      board.position(game.fen());
-    }
-
-    function updateStatus() {
-      var status = "";
-
-      var moveColor = "White";
-      if (game.turn() === "b") {
-        moveColor = "Black";
-      }
-
-      // checkmate?
-      if (game.in_checkmate()) {
-        status = "Game over, " + moveColor + " is in checkmate.";
-      }
-
-      // draw?
-      else if (game.in_draw()) {
-        status = "Game over, drawn position";
-      }
-
-      // game still on
-      else {
-        status = "Playing";
-        playturn = moveColor;
-        // status = moveColor + " to move";
-
-        // check?
-        if (game.in_check()) {
-          status = moveColor + " is in check";
-        }
-      }
-
-      $status.html(status);
-      $playturn.html(playturn);
-      $pgn.html(game.pgn());
-
-      $("#pgn").scrollTop($("#pgn")[0].scrollHeight);
-    }
-
-      var config = {
-        draggable: true,
-        position: '<%= fen %>',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd,
-        orientation: (<%= player %> == 2) ? 'black': 'white'
-      };
-      board = Chessboard("myBoard", config);
-
     updateStatus();
+  }
 
-    function leaveGame(){
-      fetch(location.href, {
-      	method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-      	body: JSON.stringify({"game_fen": game.fen()}),
-    	})
-      .then(res => location.href = ('/leave') );
+  // update the board position after the piece snap
+  // for castling, en passant, pawn promotion
+  function onSnapEnd() {
+    board.position(game.fen());
+  }
+
+  function updateStatus() {
+    var status = "";
+
+    var moveColor = "White";
+    if (game.turn() === "b") {
+      moveColor = "Black";
     }
 
-    function makeMove(){
-      fetch(location.href, {
-      	method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-      	body: JSON.stringify({"game_fen": game.fen()}),
-    	});
+    // checkmate?
+    if (game.in_checkmate()) {
+      status = "Game over, " + moveColor + " is in checkmate.";
     }
 
-    var socket = io();
-    socket.on('move', function (msg) {
-      game.move(msg);
-      board.position(game.fen());
-    });
+    // draw?
+    else if (game.in_draw()) {
+      status = "Game over, drawn position";
+    }
 
-    var params = jQuery.deparam(window.location.search);
-    socket.emit('join', params, function(err) {
-      if (err) {
-        alert(err);
-        window.location.href = '/';
-      } else {
-        console.log('No error');
+    // game still on
+    else {
+      status = "Playing";
+      playturn = moveColor;
+      // status = moveColor + " to move";
+
+      // check?
+      if (game.in_check()) {
+        status = moveColor + " is in check";
       }
+    }
+
+    $status.html(status);
+    $playturn.html(playturn);
+    $pgn.html(game.pgn({ max_width: 10, newline_char: '<br />' }));
+    console.log(game.pgn());
+
+    $("#pgn").scrollTop($("#pgn")[0].scrollHeight);
+  }
+
+  var config = {
+    draggable: true,
+    position: game.fen().substr(0,game.fen().indexOf(' ')),
+    onDragStart: onDragStart,
+    onDrop: onDrop,
+    onSnapEnd: onSnapEnd,
+    orientation: (<%= player %> == 2) ? 'black': 'white'
+  };
+  board = Chessboard("myBoard", config);
+
+  updateStatus();
+
+  function leaveGame(){
+    fetch(location.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"game_fen": game.fen()}),
     })
+    .then(res => location.href = ('/leave') );
+  }
 
-    $("#add_message").click(function () {
-      socket.emit('createMessage', params, "User <%= user_id %> :  " + ($("#comment").val()));
+  function makeMove(){
+    fetch(location.href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({"game_fen": game.fen()}),
     });
+  }
 
-    socket.on('newMessage', function (message) {
-      $("#show_comments").append(message + '<br /><br />');
-    });
+  const socket = io.connect('/chess');
 
-    // $("#add_status").click(function () {
-    //   socket.emit('status added', $("#comment").val());
-    // });
-    // socket.on('refresh feed', function (msg) {
-    //   $("#show_comments").append(msg + '<br /><br />');
-    // });
+  socket.on('playerInformation', function(){
+    socket.emit('playerInformation', <%= user_id %>, <%= game_id %>);
+  });
+
+  socket.on('moveMade', function(move){
+    game.move(move, {sloppy: true});
+    board.position(game.fen().substr(0,game.fen().indexOf(' ')), false);
+    updateStatus();
+  });
+
+  $("#sendMessage").click(function () {
+    if($("#message").val() != ""){
+        socket.emit('sendMessage',<%= user_id %>, $("#message").val(), <%= game_id %>);
+    }
+    $("#message").val("");
+  });
+
+  socket.on('receiveMessage', function (user_id, message) {
+    $("#chatbox").append("User " + user_id + " says: " + message + '<br />');
+  });
+
+
+
+
+  // var params = jQuery.deparam(window.location.search);
+  // socket.emit('join', params, function(err) {
+  //   if (err) {
+  //     alert(err);
+  //     window.location.href = '/';
+  //   } else {
+  //     console.log('No error');
+  //   }
+  // })
+  //
+  // $("#add_message").click(function () {
+  //   socket.emit('createMessage', params, "User <%= user_id %> :  " + ($("#comment").val()));
+  // });
+  //
+  // socket.on('newMessage', function (message) {
+  //   $("#show_comments").append(message + '<br /><br />');
+  // });
+
+  // $("#add_status").click(function () {
+  //   socket.emit('status added', $("#comment").val());
+  // });
+  // socket.on('refresh feed', function (msg) {
+  //   $("#show_comments").append(msg + '<br /><br />');
+  // });
   </script>
 </body>
 

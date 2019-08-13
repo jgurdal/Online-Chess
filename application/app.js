@@ -29,9 +29,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 
-//tests connection to database pool
-testDB();
-
 //Begin routes
 let options = {
     // AWS RDS
@@ -201,7 +198,7 @@ app.get('/chess', jsonParser, function (req, res) {
     fen = result[0].game_fen;
     user_id = req.user.user_id;
     res.render('chess/chess.ejs', {
-      fen: fen, user_id: user_id, player: (result[0].user_id1 == req.user.user_id)? 1: 2
+      fen: fen, user_id: user_id, player: (result[0].user_id1 == req.user.user_id)? 1: 2, game_id: game_id
     });
   });
 });
@@ -324,7 +321,7 @@ app.post("/register", function(req, res) {
 
           req.login(user_id, function(err) {
             res.send('Account successfully created! Now you can go login!\n')
-            //res.redirect("/");
+            res.redirect("/");
           });
         });
       }
@@ -376,85 +373,105 @@ function returnUsername(user_id) {
   });
 }
 
-io.on('connection',function(socket){
-  console.log("A new user is connected");
-  socket.on('status added',function(status){
-    add_status(status,function(res){
-      if(res){
-          io.emit('refresh feed',status);
-      } else {
-          io.emit('error');
-      }
-    });
+const local = io.of('/chess');
+local.on('connection', function(socket){
+
+  socket.emit('playerInformation');
+
+  socket.on('playerInformation', function(user_id, game_id){
+    console.log("User " + user_id + " has connected to gameroom " + game_id);
+    socket.join(game_id);
   });
 
-  socket.on('move', function(msg) {
-    socket.broadcast.emit('move', msg);
+  socket.on('moveMade', function(move, game_id){
+    local.to(game_id).emit('moveMade', move);
   });
 
-  socket.on('join', (params, callback) => {
-    if (!isRealString(params.id)) {
-      callback('Unique game ID are required.');
-    }
-
-    socket.join(params.id);
-    // socket.leave('The Office Fans');
-
-    // io.emit -> io.to('The Office Fans').emit
-    // socket.broadcast.emit -> socket.broadcast.to('The Office Fans').emit
-    socket.emit('newMessage', 'Welcome!');
-    socket.broadcast.to(params.id).emit('newMessage', 'A new user has joined!');
-
-    callback();
-  });
-
-  socket.on('createMessage', function() {
-    // console.log(arguments[0].id);
-    io.to(arguments[0].id).emit('newMessage', arguments[1]);
+  socket.on('sendMessage', function(user_id, message, game_id){
+    local.to(game_id).emit('receiveMessage', user_id, message);
   });
 });
 
-var isRealString = (str) => {
-  return typeof str === 'string' && str.trim().length > 0;
-}
 
 
-
-    // Just you and the server (socket.emit)
-    // A message from point to everyone, except you (socket.broadcast.emit)
-    // Everyone gets the message, you, server, and all broadcast users (io.emit)
-
-
-// const expect = require('expect');
-// describe('isRealString', () => {
-//   it('should reject non-string values', () => {
-//     var res = isRealString(98);
-//     expect(res).toBe(false);
+// io.on('connection',function(socket){
+//   socket.on('status added',function(status){
+//     add_status(status,function(res){
+//       if(res){
+//           io.emit('refresh feed',status);
+//       } else {
+//           io.emit('error');
+//       }
+//     });
 //   });
-
-//   it('should reject string with only spaces', () => {
-//     var res = isRealString('    ');
-//     expect(res).toBe(false);
+//
+//   socket.on('move', function(msg) {
+//     socket.broadcast.emit('move', msg);
 //   });
-
-//   it('should allow string with non-space characters', () => {
-//     var res = isRealString('  Andrew  ');
-//     expect(res).toBe(true);
+//
+//   socket.on('join', (params, callback) => {
+//     if (!isRealString(params.id)) {
+//       callback('Unique game ID are required.');
+//     }
+//
+//     socket.join(params.id);
+//     // socket.leave('The Office Fans');
+//
+//     // io.emit -> io.to('The Office Fans').emit
+//     // socket.broadcast.emit -> socket.broadcast.to('The Office Fans').emit
+//     socket.emit('newMessage', 'Welcome!');
+//     socket.broadcast.to(params.id).emit('newMessage', 'A new user has joined!');
+//
+//     callback();
+//   });
+//
+//   socket.on('createMessage', function() {
+//     // console.log(arguments[0].id);
+//     io.to(arguments[0].id).emit('newMessage', arguments[1]);
 //   });
 // });
-
-var add_status = function (status,callback) {
-
-
-    let db = createConnection();
-
-    db.query("INSERT INTO `fbstatus` (`s_text`) VALUES ('"+status+"')",function(err,rows){
-            db.end();
-            if(!err) {
-              callback(true);
-            }
-        });
-}
+//
+// var isRealString = (str) => {
+//   return typeof str === 'string' && str.trim().length > 0;
+// }
+//
+//
+//
+//     // Just you and the server (socket.emit)
+//     // A message from point to everyone, except you (socket.broadcast.emit)
+//     // Everyone gets the message, you, server, and all broadcast users (io.emit)
+//
+//
+// // const expect = require('expect');
+// // describe('isRealString', () => {
+// //   it('should reject non-string values', () => {
+// //     var res = isRealString(98);
+// //     expect(res).toBe(false);
+// //   });
+//
+// //   it('should reject string with only spaces', () => {
+// //     var res = isRealString('    ');
+// //     expect(res).toBe(false);
+// //   });
+//
+// //   it('should allow string with non-space characters', () => {
+// //     var res = isRealString('  Andrew  ');
+// //     expect(res).toBe(true);
+// //   });
+// // });
+//
+// var add_status = function (status,callback) {
+//
+//
+//     let db = createConnection();
+//
+//     db.query("INSERT INTO `fbstatus` (`s_text`) VALUES ('"+status+"')",function(err,rows){
+//             db.end();
+//             if(!err) {
+//               callback(true);
+//             }
+//         });
+// }
 
 
 // For working locally, uncomment two lines below
