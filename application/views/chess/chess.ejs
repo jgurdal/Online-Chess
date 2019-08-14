@@ -59,8 +59,10 @@
           <div class="row">
             <div id="chatbox" class="pre-scrollable" ></div>
             <div class="flexContainer">
+              <form action="">
               <input id="message" placeholder="Message" class="inputField"></input>
-              <button id="sendMessage">Send</button>
+              <button>Send</button>
+            </form>
             </div>
 
           </div>
@@ -201,7 +203,7 @@
     });
   }
 
-  const socket = io.connect('/chess');
+  var socket = io();
 
   socket.on('playerInformation', function(){
     socket.emit('playerInformation', <%= user_id %>, <%= game_id %>);
@@ -213,14 +215,17 @@
     updateStatus();
   });
 
-  $("#sendMessage").click(function () {
-    if($("#message").val() != ""){
-        socket.emit('sendMessage',<%= user_id %>, $("#message").val(), <%= game_id %>);
-    }
-    $("#message").val("");
-  });
+  $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      if($("#message").val() != ""){
+          socket.emit('sendMessage',<%= user_id %>, $("#message").val(), <%= game_id %>);
+      }
+      $("#message").val("");
+      return false;
+    });
 
   socket.on('receiveMessage', function (user_id, message) {
+    console.log(user_id + " has receieved a message" + message);
     $("#chatbox").append("User " + user_id + " says: " + message + '<br />');
   });
 

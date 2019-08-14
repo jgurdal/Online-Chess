@@ -373,22 +373,20 @@ function returnUsername(user_id) {
   });
 }
 
-const local = io.of('/chess');
+const local = io;
 local.on('connection', function(socket){
-
   socket.emit('playerInformation');
 
   socket.on('playerInformation', function(user_id, game_id){
     console.log("User " + user_id + " has connected to gameroom " + game_id);
-    socket.join(game_id);
   });
 
   socket.on('moveMade', function(move, game_id){
-    local.to(game_id).emit('moveMade', move);
+    local.emit('moveMade', move);
   });
 
   socket.on('sendMessage', function(user_id, message, game_id){
-    local.to(game_id).emit('receiveMessage', user_id, message);
+    local.emit('receiveMessage', user_id, message);
   });
 });
 
