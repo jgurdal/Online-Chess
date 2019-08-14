@@ -57,14 +57,11 @@
         <!-- Chat -->
         <div class="col">
           <div class="row">
-            <div id="chatbox" class="pre-scrollable" ></div>
-            <div class="flexContainer">
-              <form action="">
-              <input id="message" placeholder="Message" class="inputField"></input>
-              <button>Send</button>
-            </form>
-            </div>
-
+            <div id="show_comments" class="pre-scrollable" ></div>
+                <div class="flexContainer">
+                  <input id="comment" placeholder="Message" class="inputField"></input>
+                  <button id="add_message">Send</button>
+                </div>
           </div>
         </div>
       </div>
@@ -120,7 +117,7 @@
     // illegal move
     if (move === null) return "snapback";
     else {
-      socket.emit('moveMade', move, <%= game_id %>);
+      socket.emit('move', move);
       makeMove();
     }
     updateStatus();
@@ -209,53 +206,30 @@
     socket.emit('playerInformation', <%= user_id %>, <%= game_id %>);
   });
 
-  socket.on('moveMade', function(move){
+  socket.on('move', function(move){
     game.move(move, {sloppy: true});
     board.position(game.fen().substr(0,game.fen().indexOf(' ')), false);
     updateStatus();
   });
 
-  $('form').submit(function(e){
-      e.preventDefault(); // prevents page reloading
-      if($("#message").val() != ""){
-          socket.emit('sendMessage',<%= user_id %>, $("#message").val(), <%= game_id %>);
-      }
-      $("#message").val("");
-      return false;
-    });
+  var params = jQuery.deparam(window.location.search);
+  socket.emit('join', params, function(err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  })
 
-  socket.on('receiveMessage', function (user_id, message) {
-    console.log(user_id + " has receieved a message" + message);
-    $("#chatbox").append("User " + user_id + " says: " + message + '<br />');
+  $("#add_status").click(function () {
+    socket.emit('status added', $("#comment").val());
+  });
+  socket.on('refresh feed', function (msg) {
+    $("#show_comments").append(msg + '<br /><br />');
   });
 
 
-
-
-  // var params = jQuery.deparam(window.location.search);
-  // socket.emit('join', params, function(err) {
-  //   if (err) {
-  //     alert(err);
-  //     window.location.href = '/';
-  //   } else {
-  //     console.log('No error');
-  //   }
-  // })
-  //
-  // $("#add_message").click(function () {
-  //   socket.emit('createMessage', params, "User <%= user_id %> :  " + ($("#comment").val()));
-  // });
-  //
-  // socket.on('newMessage', function (message) {
-  //   $("#show_comments").append(message + '<br /><br />');
-  // });
-
-  // $("#add_status").click(function () {
-  //   socket.emit('status added', $("#comment").val());
-  // });
-  // socket.on('refresh feed', function (msg) {
-  //   $("#show_comments").append(msg + '<br /><br />');
-  // });
   </script>
 </body>
 
