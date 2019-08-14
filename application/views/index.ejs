@@ -34,7 +34,8 @@
   <div class="container-fluid">
     <div class="row">
       <!-- Chat -->
-      <div class="col-3">
+      <div class="col-4 ">
+        <br />
         <div class="row">
           <div id="show_comments" class="boxscroll"></div>
           <div class="flexContainer">
@@ -45,11 +46,30 @@
         <!-- Will need to add input field and button for sending messages -->
       </div>
       <!-- Lobby -->
-      <div class="col-9">
+      <div class="col-4">
+        <br />
+        <div class="tableDiv">
+          <h2 style="background-color:#7FB800">Global Table</h2>
+          <table class="table table-hover" style="margin-bottom: 0px">
+            <thead>
+              <tr>
+                <th scope="col" width="33%">Match Name</th>
+                <th scope="col" width="33%">Host</th>
+                <th scope="col" width="33%">Room Size</th>
+              </tr>
+            </thead>
+            <tbody id="tablebody">
+            </tbody>
+          </table>
+        </div>
+        <!-- /col-4 -->
+      </div>
+      <div class="col-4">
         <% if (isAuthenticated) { %>
         <br />
         <!-- TODO: Add fixed size to the tables, look into  using avail screen height -->
-        <div style="border:1px solid black; overflow:auto;">
+        
+        <div class="tableDiv">
           <h2 style="background-color:#00A6ED">Personal Table</h2>
           <table class="table table-hover" style="margin-bottom: 0px">
             <thead>
@@ -72,22 +92,6 @@
           </table>
         </div>
         <% } %>
-        <br />
-        <div style="border: 1px solid black;overflow:auto">
-          <h2 style="background-color:#7FB800">Global Table</h2>
-          <table class="table table-hover" style="margin-bottom: 0px">
-            <thead>
-              <tr>
-                <th scope="col" width="33%">Match Name</th>
-                <th scope="col" width="33%">Host</th>
-                <th scope="col" width="33%">Room Size</th>
-              </tr>
-            </thead>
-            <tbody id="tablebody">
-            </tbody>
-          </table>
-        </div>
-        <!-- /col-9 -->
       </div>
       <!-- /Row -->
     </div>
