@@ -118,7 +118,6 @@
     if (move === null) return "snapback";
     else {
       socket.emit('move', move);
-      makeMove();
     }
     updateStatus();
   }
