@@ -228,7 +228,6 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
       });
     }
   });
-  db.end();
 });
 
 app.post('/chess', jsonParser, function (req, res) {
@@ -252,7 +251,6 @@ app.post('/joinGame',jsonParser, function(req, res){
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
-  db.end();
 }
 });
 
@@ -264,7 +262,6 @@ app.post('/rejoinGame',jsonParser, function(req, res){
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
-  db.end();
 }
 });
 
