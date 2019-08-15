@@ -106,6 +106,7 @@ passport.use(new LocalStrategy({
 
 var renderFlash = 0;
 var createFlash = 0;
+var regFlash = 0;
 var numOfMatches = 0;
 var matchName = [];
 var opponent = [];
@@ -136,10 +137,13 @@ app.get('/', function (req, res) {
       message: req.flash('error'),
       createMessage: req.flash('createJoinGame'),
       createFlash: createFlash,
-      flash: renderFlash
+      flash: renderFlash,
+      regFlash: regFlash,
+      registerMessage: req.flash('registerFlash')
     });
     renderFlash = 0;
     createFlash = 0;
+    regFlash = 0;
   }
 
 });
@@ -175,10 +179,13 @@ function personalGamesTable (req, res) {
         message: req.flash('error'),
         createMessage: req.flash('createJoinGame'),
         createFlash: createFlash,
-        flash: renderFlash
+        flash: renderFlash,
+        regFlash: regFlash,
+        registerMessage: req.flash('registerFlash')
       });
       renderFlash = 0;
       createFlash = 0;
+      regFlash = 0;
     }
   });
 }
@@ -221,6 +228,7 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
       });
     }
   });
+  db.end();
 });
 
 app.post('/chess', jsonParser, function (req, res) {
@@ -244,6 +252,7 @@ app.post('/joinGame',jsonParser, function(req, res){
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
+  db.end();
 }
 });
 
@@ -255,6 +264,7 @@ app.post('/rejoinGame',jsonParser, function(req, res){
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
+  db.end();
 }
 });
 
@@ -320,7 +330,9 @@ app.post("/register", function(req, res) {
           // console.log(user_name);
 
           req.login(user_id, function(err) {
-            res.send('Account successfully created! Now you can go login!\n')
+            //res.send('Account successfully created! Now you can go login!\n')
+            regFlash = 1;
+            req.flash('registerFlash', 'Account successfully created! Now you can go play chess!');
             res.redirect("/");
           });
         });
