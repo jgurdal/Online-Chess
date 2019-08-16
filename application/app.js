@@ -2,8 +2,6 @@
 var express = require('express');
 
 var bodyParser = require('body-parser');
-var {testDB, queryDB, closeDB} = require(__dirname + "/database/dbPool.js");
-
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
