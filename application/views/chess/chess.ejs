@@ -37,12 +37,9 @@
                 <div id="playturn"></div>
               </div>
               <hr/>
-              <!-- Buttons -->
+              <!-- Button -->
               <button class="btn btn-block btn-danger" style="font-size:90%" onclick="leaveGame()">Leave Game</button>
-              <button class="btn btn-block btn-danger" style="font-size:90%">Forfeit Game</button>
               <hr/>
-              <button id="makemove" class="btn btn-block btn-primary" style="font-size:90%">Current Move</button>
-              <button class="btn btn-block btn-primary" style="font-size:90%" onclick="makeMove()">Confirm Move</button>
             </div>
             <!-- Movelist Col -->
             <div class="col">
@@ -58,10 +55,10 @@
         <div class="col">
           <div class="row">
             <div id="show_comments" class="pre-scrollable" ></div>
-                <div class="flexContainer">
-                  <input id="comment" placeholder="Message" class="inputField"></input>
-                  <button id="add_message">Send</button>
-                </div>
+            <div class="flexContainer">
+              <input id="comment" placeholder="Message" class="inputField"></input>
+              <button id="add_message">Send</button>
+            </div>
           </div>
         </div>
       </div>
@@ -89,7 +86,7 @@
   console.log("The player id is " + <%= user_id %>);
   console.log("The player number is " + <%= player %>);
   console.log(game.ascii());
-  console.log(game.pgn());
+
 
   function onDragStart(source, piece, position, orientation) {
     // do not pick up pieces if the game is over
@@ -99,6 +96,7 @@
     if (
       (game.turn() === "w" && piece.search(/^b/) !== -1) ||
       (game.turn() === "b" && piece.search(/^w/) !== -1) ||
+      //checks to make sure only white can moves whites pieces etc
       (game.turn() === "w" && <%= player %> == 2) ||
       (game.turn() === "b" && <%= player %> == 1)
     ) {
@@ -117,7 +115,10 @@
     // illegal move
     if (move === null) return "snapback";
     else {
+      //sends move to the other player
       socket.emit('move', move);
+      //sends move to the database
+      makeMove();
     }
     updateStatus();
   }
@@ -160,35 +161,37 @@
 
     $status.html(status);
     $playturn.html(playturn);
-    $pgn.html(game.pgn({ max_width: 10, newline_char: '<br />' }));
-    console.log(game.pgn());
-
+    //use html5 sessionStorage to store games list
+    //list persists as long is window is open (persists through leave game/rejoin game)
+    if (sessionStorage) $pgn.html(sessionStorage.getItem("<%= game_id %>"));
+    var parseMoves = game.history({verbose: true});
+    if (parseMoves.length > 0){
+      $pgn.append(parseMoves[parseMoves.length - 1].color + " ---> " + parseMoves[parseMoves.length - 1].san + "<br/>");
+      if (sessionStorage) sessionStorage.setItem("<%= game_id %>", $pgn.html());
+    }
     $("#pgn").scrollTop($("#pgn")[0].scrollHeight);
   }
 
   var config = {
     draggable: true,
-    position: game.fen().substr(0,game.fen().indexOf(' ')),
+    position: game.fen(),
     onDragStart: onDragStart,
     onDrop: onDrop,
     onSnapEnd: onSnapEnd,
+    //orients the board according to the player
     orientation: (<%= player %> == 2) ? 'black': 'white'
   };
   board = Chessboard("myBoard", config);
 
   updateStatus();
 
+  //since game moves are stored in db in real time, leave simply redirects to home
   function leaveGame(){
-    fetch(location.href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({"game_fen": game.fen()}),
-    })
+    fetch('/leave')
     .then(res => location.href = ('/leave') );
   }
 
+  //stores game.fen() in Chess table in database
   function makeMove(){
     fetch(location.href, {
       method: 'POST',
@@ -200,14 +203,10 @@
   }
 
   var socket = io();
-
-  socket.on('playerInformation', function(){
-    socket.emit('playerInformation', <%= user_id %>, <%= game_id %>);
-  });
-
+  
   socket.on('move', function(move){
-    game.move(move, {sloppy: true});
-    board.position(game.fen().substr(0,game.fen().indexOf(' ')), false);
+    game.move(move);
+    board.position(game.fen(), false);
     updateStatus();
   });
 
@@ -226,16 +225,8 @@
   });
 
   socket.on('newMessage', function (message) {
-      $("#show_comments").append("User " + <%= user_id %> + " : " +message + '<br /><br />');
-    });
-
-  // $("#add_status").click(function () {
-  //   socket.emit('status added', $("#comment").val());
-  // });
-  // socket.on('refresh feed', function (msg) {
-  //   $("#show_comments").append(msg + '<br /><br />');
-  // });
-
+    $("#show_comments").append("User " + <%= user_id %> + " : " +message + '<br /><br />');
+  });
 
   </script>
 </body>
