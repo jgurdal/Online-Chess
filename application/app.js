@@ -2,8 +2,6 @@
 var express = require('express');
 
 var bodyParser = require('body-parser');
-var {testDB, queryDB, closeDB} = require(__dirname + "/database/dbPool.js");
-
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -201,6 +199,7 @@ app.get('/chess', jsonParser, function (req, res) {
   let db = createConnection();
   let sql = "SELECT * FROM Chess C WHERE game_id = ?";
   db.query(sql,[game_id],function(err, result, field) {
+    db.end();
     if (err) throw err;
     fen = result[0].game_fen;
     user_id = req.user.user_id;
@@ -228,7 +227,6 @@ app.post('/createGame', authenticationMiddleware(), function (req, res) {
       });
     }
   });
-  db.end();
 });
 
 app.post('/chess', jsonParser, function (req, res) {
@@ -238,6 +236,7 @@ app.post('/chess', jsonParser, function (req, res) {
   let db = createConnection();
   let sql = "UPDATE Chess C SET C.game_fen  = ? WHERE game_id = ?";
   db.query(sql,[req.body.game_fen, game_id],function(err, result, field) {
+    db.end();
     if (err) throw err;
     if (result.affectedRows != 0) res.send("success");
   });
@@ -249,10 +248,10 @@ app.post('/joinGame',jsonParser, function(req, res){
   let db = createConnection();
   let sql = "UPDATE Chess SET user_id2 = ? WHERE game_id = ? AND user_id1 <> ?";
   db.query(sql,[req.user.user_id, req.body.game_id, req.user.user_id],function(err, result, field) {
+    db.end();
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
-  db.end();
 }
 });
 
@@ -261,10 +260,10 @@ app.post('/rejoinGame',jsonParser, function(req, res){
   let db = createConnection();
   let sql = "Select * FROM Chess C WHERE C.game_id = ?";
   db.query(sql,[req.body.game_id],function(err, result, field) {
+    db.end();
     if (err) throw err;
     if (result.affectedRows != 0) res.redirect('/chess/?id=' + req.body.game_id);
   });
-  db.end();
 }
 });
 
@@ -426,13 +425,6 @@ io.on('connection',function(socket){
 var isRealString = (str) => {
   return typeof str === 'string' && str.trim().length > 0;
 }
-
-
-
-    // Just you and the server (socket.emit)
-    // A message from point to everyone, except you (socket.broadcast.emit)
-    // Everyone gets the message, you, server, and all broadcast users (io.emit)
-
 
 // const expect = require('expect');
 // describe('isRealString', () => {
