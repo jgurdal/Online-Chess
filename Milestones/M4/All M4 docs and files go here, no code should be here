@@ -1,0 +1,24 @@
+Branch milestone4eval was created and updated with most recent working version of the code. 
+2.	URL to page: http://13.57.235.101/
+3.	Login Information
+-	Username: test
+-	Password: test
+4.	Items Completed:
+-	Login and Registration
+-	Creating a game of chess
+-	Chess game functionality, moving pieces, the game can tell when the users are in check, checkmate, and when there is a victor
+-	Sending messages on the chess page.
+-	Displaying move history.
+5.	Items in Progress:
+-	Sending messages on the home page
+-	Linking the Leave game, forfeit game, current move, confirm move buttons on the chess page to the proper routes.
+-	Joining a lobby.
+-	Showing the board state from previous moves
+6.	Credentials to server and database:
+-	Host: chessdb.cabihvrofnfu.us-west-1.rds.amazonaws.com
+-	User: root
+-	Password: Team7isthebestteam
+-	Database: csc667teamchess
+-	The PEM file is attached. 
+Click the link and sign in as administrator using the password Team2isthebestteam
+https://279835227064.signin.aws.amazon.com/console
