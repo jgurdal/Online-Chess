@@ -1,37 +1,18 @@
-# csc667-su19-Team02
-
-## Please when ready add your teams application URL or IP to the repository description. This will help with grading. Teams are expected to keep this value up to date.
-
-## http://13.57.235.101/
-
-## GitHub Instructions
-
-1. Clone the repository with the following command:
+# SFSU Software Engineering Project CSC667, Summer 2019
 
 ```
-git clone https://github.com/csc667/csc667-su19-Team02.git
-``` 
-
-2. Checkout the feature branch you wish to work on:
-
-```
-git checkout feature-registration
-``` 
-
-3. Download any new data on the branch from the remote repository with:
-
-```
-git fetch origin feature-registration
+*** For Demonstration Only ***
 ```
 
-4. Once your work is finished:
+# Team 2 - Project Chess Online Multiplayer Game
 
 ```
-git commit -m "Please leave a detailed commit message here"
+A chess multiplayer game that supports chats, and realtime chess board games!
+
+Built using the best practices of modern software engineering processes such as agile/scrum and user-centered design for providing a good user experience.
 ```
 
-5. Finally, to push your work to the remote repository:
+## Connection Endpoint
 
-```
-git push origin feature-registration
-```
+http://13.57.235.101/
+
