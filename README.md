@@ -14,6 +14,7 @@ Built using the best practices of modern software engineering processes such as 
 
 ## Team Members
 
+```
 1. Andrew    Backend Team lead
 
 Role:
@@ -28,6 +29,8 @@ Role:
 4. Ashil       Developer 
 5. James       Developer 
 6. Tuan        Developer
+
+```
 
 ## Connection Endpoint
 
